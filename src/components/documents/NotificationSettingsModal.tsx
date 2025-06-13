@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Mail, MessageSquare, Bell, Smartphone, Globe, CheckCircle, Settings } from 'lucide-react';
+import { X, Mail, MessageSquare, Bell, Smartphone, Globe, CheckCircle, Settings, Plus } from 'lucide-react';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import { documentService } from '../../services/documentService';
@@ -266,7 +266,7 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
                             required
                           />
                           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                            Available variables: {{'{{'}}student_name{{'}}'}}, {{'{{'}}document_type{{'}}'}}, {{'{{'}}expiry_date{{'}}'}}, {{'{{'}}document_link{{'}}'}}
+                            Available variables: {'{{student_name}}'}, {'{{document_type}}'}, {'{{expiry_date}}'}, {'{{document_link}}'}
                           </p>
                         </div>
                         
