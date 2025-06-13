@@ -55,6 +55,62 @@ class UniversityService {
   private universities: UniversityData[] = [];
   private isLoaded = false;
 
+  // Define allowed countries/regions
+  private allowedCountries = new Set([
+    // Australia
+    'Australia',
+    
+    // United States
+    'United States',
+    'United States of America',
+    
+    // United Kingdom
+    'United Kingdom',
+    'England',
+    'Scotland',
+    'Wales',
+    'Northern Ireland',
+    
+    // Canada
+    'Canada',
+    
+    // China
+    'China',
+    'Hong Kong',
+    'Macau',
+    
+    // European Countries
+    'Germany',
+    'France',
+    'Netherlands',
+    'Sweden',
+    'Norway',
+    'Denmark',
+    'Finland',
+    'Switzerland',
+    'Austria',
+    'Belgium',
+    'Ireland',
+    'Italy',
+    'Spain',
+    'Portugal',
+    'Poland',
+    'Czech Republic',
+    'Hungary',
+    'Estonia',
+    'Latvia',
+    'Lithuania',
+    'Slovenia',
+    'Slovakia',
+    'Croatia',
+    'Romania',
+    'Bulgaria',
+    'Greece',
+    'Cyprus',
+    'Malta',
+    'Luxembourg'
+  ]);
+
   // Course categories with specific courses
   private courseCategories: CourseCategory[] = [
     {
@@ -224,6 +280,10 @@ class UniversityService {
     return UniversityService.instance;
   }
 
+  private isAllowedCountry(country: string): boolean {
+    return this.allowedCountries.has(country);
+  }
+
   async fetchUniversities(): Promise<UniversityData[]> {
     if (this.isLoaded) {
       return this.universities;
@@ -239,10 +299,12 @@ class UniversityService {
       }
       
       const data: UniversityData[] = await response.json();
-      this.universities = data;
+      
+      // Filter universities to only include allowed countries/regions
+      this.universities = data.filter(uni => this.isAllowedCountry(uni.country));
       this.isLoaded = true;
       
-      return data;
+      return this.universities;
     } catch (error) {
       console.error('Error fetching universities:', error);
       throw new Error('Failed to fetch universities data');
@@ -414,35 +476,28 @@ class UniversityService {
         livingCosts: 'CHF 18,000 - 28,000',
         totalEstimate: 'CHF 19,000 - 32,000'
       },
-      'Japan': {
-        currency: 'JPY',
-        tuitionFee: isPrivate ? '¥800,000 - 1,500,000' : '¥535,800',
-        applicationFee: '¥17,000 - 30,000',
-        livingCosts: '¥800,000 - 1,200,000',
-        totalEstimate: isPrivate ? '¥1,600,000 - 2,700,000' : '¥1,335,000 - 1,735,000'
+      'China': {
+        currency: 'CNY',
+        tuitionFee: isPrivate ? '¥30,000 - 80,000' : '¥15,000 - 40,000',
+        applicationFee: '¥400 - 800',
+        livingCosts: '¥20,000 - 40,000',
+        totalEstimate: isPrivate ? '¥50,000 - 120,000' : '¥35,000 - 80,000'
       },
-      'South Korea': {
-        currency: 'KRW',
-        tuitionFee: isPrivate ? '₩8,000,000 - 15,000,000' : '₩4,000,000 - 8,000,000',
-        applicationFee: '₩50,000 - 150,000',
-        livingCosts: '₩6,000,000 - 10,000,000',
-        totalEstimate: isPrivate ? '₩14,000,000 - 25,000,000' : '₩10,000,000 - 18,000,000'
-      },
-      'Singapore': {
-        currency: 'SGD',
-        tuitionFee: isPremium ? 'S$35,000 - 55,000' : 'S$20,000 - 40,000',
-        applicationFee: 'S$50 - 150',
-        livingCosts: 'S$12,000 - 18,000',
-        totalEstimate: isPremium ? 'S$47,000 - 73,000' : 'S$32,000 - 58,000'
+      'Hong Kong': {
+        currency: 'HKD',
+        tuitionFee: 'HK$140,000 - 280,000',
+        applicationFee: 'HK$300 - 500',
+        livingCosts: 'HK$80,000 - 120,000',
+        totalEstimate: 'HK$220,000 - 400,000'
       }
     };
 
     const defaultFees = {
-      currency: 'USD',
-      tuitionFee: isPrivate ? '$8,000 - $25,000' : '$3,000 - $15,000',
-      applicationFee: '$50 - $150',
-      livingCosts: '$6,000 - $12,000',
-      totalEstimate: isPrivate ? '$14,000 - $37,000' : '$9,000 - $27,000'
+      currency: 'EUR',
+      tuitionFee: isPrivate ? '€8,000 - €25,000' : '€3,000 - €15,000',
+      applicationFee: '€50 - €150',
+      livingCosts: '€6,000 - €12,000',
+      totalEstimate: isPrivate ? '€14,000 - €37,000' : '€9,000 - €27,000'
     };
 
     const fees = feeStructures[country] || defaultFees;
@@ -509,7 +564,9 @@ class UniversityService {
       'France': '$200 - $15,000',
       'Netherlands': '$2,000 - $20,000',
       'Sweden': 'Free - $15,000',
-      'Norway': 'Free - $10,000'
+      'Norway': 'Free - $10,000',
+      'China': '$3,000 - $15,000',
+      'Hong Kong': '$15,000 - $30,000'
     };
     
     return ranges[country] || '$5,000 - $25,000';
@@ -542,7 +599,9 @@ class UniversityService {
       'Italy': 'Italian B2 or IELTS 6.5',
       'Netherlands': 'IELTS 6.5',
       'Sweden': 'IELTS 6.5',
-      'Norway': 'IELTS 6.5'
+      'Norway': 'IELTS 6.5',
+      'China': 'HSK 4 or IELTS 6.0',
+      'Hong Kong': 'IELTS 6.0'
     };
     
     return tests[country] || 'IELTS 6.5';
