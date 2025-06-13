@@ -5,6 +5,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import HomePage from './pages/HomePage';
 import UniversitiesPage from './pages/UniversitiesPage';
 import ProfileDocumentationPage from './pages/ProfileDocumentationPage';
+import DashboardPage from './pages/DashboardPage';
 import SignupPage from './pages/SignupPage';
 import LoginPage from './pages/LoginPage';
 
@@ -17,6 +18,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/universities" element={<UniversitiesPage />} />
             <Route path="/profile/documents" element={<ProfileDocumentationPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />} />
             {/* Add more routes as needed */}
