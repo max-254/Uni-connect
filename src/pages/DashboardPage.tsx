@@ -16,13 +16,17 @@ import {
   Download,
   Eye,
   Plus,
-  BarChart3
+  BarChart3,
+  Brain,
+  Zap
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Card, CardHeader, CardBody } from '../components/ui/Card';
 import Button from '../components/ui/Button';
+import ProfileInsights from '../components/profile/ProfileInsights';
 import { useAuth } from '../context/AuthContext';
+import { documentParsingService } from '../services/documentParsingService';
 
 interface Document {
   id: string;
@@ -32,6 +36,8 @@ interface Document {
   uploadDate: Date;
   size: number;
   url?: string;
+  parsedData?: any;
+  confidenceScore?: number;
 }
 
 interface Application {
@@ -54,7 +60,7 @@ interface ProfileCompletion {
 
 const DashboardPage: React.FC = () => {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<'overview' | 'documents' | 'applications' | 'profile'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'documents' | 'applications' | 'profile' | 'insights'>('overview');
   const [documents, setDocuments] = useState<Document[]>([
     {
       id: '1',
@@ -63,25 +69,28 @@ const DashboardPage: React.FC = () => {
       status: 'verified',
       uploadDate: new Date('2024-01-15'),
       size: 2048000,
-      url: '#'
+      url: '#',
+      confidenceScore: 95
     },
     {
       id: '2',
       name: 'CV_John_Doe.pdf',
       type: 'cv',
-      status: 'uploaded',
+      status: 'verified',
       uploadDate: new Date('2024-01-20'),
       size: 1024000,
-      url: '#'
+      url: '#',
+      confidenceScore: 88
     },
     {
       id: '3',
       name: 'Personal_Statement.pdf',
       type: 'statement',
-      status: 'pending',
+      status: 'verified',
       uploadDate: new Date('2024-01-22'),
       size: 512000,
-      url: '#'
+      url: '#',
+      confidenceScore: 92
     }
   ]);
 
@@ -117,10 +126,42 @@ const DashboardPage: React.FC = () => {
   const [profileCompletion, setProfileCompletion] = useState<ProfileCompletion>({
     personalInfo: true,
     academicBackground: true,
-    documents: false,
+    documents: true,
     preferences: true,
-    overall: 75
+    overall: 95
   });
+
+  const [studentProfile, setStudentProfile] = useState<any>(null);
+  const [parsedDocuments, setParsedDocuments] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (user) {
+      loadStudentData();
+    }
+  }, [user]);
+
+  const loadStudentData = async () => {
+    try {
+      // Load student profile and parsed documents
+      const [profile, parsed] = await Promise.all([
+        documentParsingService.getStudentProfile(user!.id),
+        documentParsingService.getParsedDocuments(user!.id)
+      ]);
+
+      setStudentProfile(profile);
+      setParsedDocuments(parsed);
+
+      // Update profile completion based on actual data
+      if (profile) {
+        setProfileCompletion(prev => ({
+          ...prev,
+          overall: profile.profile_completion || 0
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading student data:', error);
+    }
+  };
 
   const getStatusIcon = (status: Document['status']) => {
     switch (status) {
@@ -173,6 +214,22 @@ const DashboardPage: React.FC = () => {
     return diffDays;
   };
 
+  const getAIInsightsSummary = () => {
+    const verifiedDocs = documents.filter(doc => doc.status === 'verified').length;
+    const avgConfidence = documents
+      .filter(doc => doc.confidenceScore)
+      .reduce((sum, doc) => sum + (doc.confidenceScore || 0), 0) / 
+      documents.filter(doc => doc.confidenceScore).length || 0;
+
+    return {
+      documentsAnalyzed: verifiedDocs,
+      averageConfidence: Math.round(avgConfidence),
+      profileStrength: profileCompletion.overall
+    };
+  };
+
+  const aiSummary = getAIInsightsSummary();
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navbar />
@@ -187,7 +244,7 @@ const DashboardPage: React.FC = () => {
                   Welcome back, {user?.name || 'Student'}!
                 </h1>
                 <p className="mt-2 text-gray-600 dark:text-gray-400">
-                  Track your applications and manage your documents
+                  Track your applications and manage your documents with AI-powered insights
                 </p>
               </div>
               <div className="mt-4 sm:mt-0 flex items-center space-x-3">
@@ -211,29 +268,52 @@ const DashboardPage: React.FC = () => {
             </div>
           </div>
 
+          {/* AI Insights Banner */}
+          <Card className="mb-8 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-purple-200 dark:border-purple-800">
+            <CardBody className="p-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                    <Brain className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-purple-900 dark:text-purple-300">
+                      AI Profile Analysis Complete
+                    </h3>
+                    <p className="text-purple-700 dark:text-purple-400">
+                      {aiSummary.documentsAnalyzed} documents analyzed • {aiSummary.averageConfidence}% avg confidence • {aiSummary.profileStrength}% profile strength
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-4 sm:mt-0 flex items-center space-x-3">
+                  <Button
+                    onClick={() => setActiveTab('insights')}
+                    leftIcon={<Zap size={16} />}
+                    className="bg-purple-600 hover:bg-purple-700"
+                  >
+                    View Insights
+                  </Button>
+                </div>
+              </div>
+            </CardBody>
+          </Card>
+
           {/* Profile Completion Banner */}
-          <Card className="mb-8 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border-blue-200 dark:border-blue-800">
+          <Card className="mb-8 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20 border-blue-200 dark:border-blue-800">
             <CardBody className="p-6">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    Complete Your Profile
+                    Profile Status: {profileCompletion.overall >= 90 ? 'Excellent' : profileCompletion.overall >= 70 ? 'Good' : 'Needs Improvement'}
                   </h3>
                   <p className="text-gray-600 dark:text-gray-400 mb-4">
-                    {profileCompletion.overall}% complete - Add missing information to improve your application success rate
+                    {profileCompletion.overall}% complete - {profileCompletion.overall >= 90 ? 'Your profile is ready for applications!' : 'Complete missing sections to improve matching accuracy'}
                   </p>
                   <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-4">
                     <div 
-                      className="bg-gradient-to-r from-blue-600 to-purple-600 h-3 rounded-full transition-all duration-300"
+                      className="bg-gradient-to-r from-blue-600 to-green-600 h-3 rounded-full transition-all duration-300"
                       style={{ width: `${profileCompletion.overall}%` }}
                     />
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {!profileCompletion.documents && (
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300">
-                        Upload Documents
-                      </span>
-                    )}
                   </div>
                 </div>
                 <div className="mt-4 sm:mt-0 sm:ml-6">
@@ -241,7 +321,7 @@ const DashboardPage: React.FC = () => {
                     onClick={() => setActiveTab('profile')}
                     leftIcon={<User size={16} />}
                   >
-                    Complete Profile
+                    {profileCompletion.overall >= 90 ? 'View Profile' : 'Complete Profile'}
                   </Button>
                 </div>
               </div>
@@ -254,6 +334,7 @@ const DashboardPage: React.FC = () => {
               <nav className="-mb-px flex space-x-8 overflow-x-auto">
                 {[
                   { id: 'overview', label: 'Overview', icon: BarChart3 },
+                  { id: 'insights', label: 'AI Insights', icon: Brain },
                   { id: 'documents', label: 'Documents', icon: FileText },
                   { id: 'applications', label: 'Applications', icon: GraduationCap },
                   { id: 'profile', label: 'Profile', icon: User }
@@ -428,6 +509,10 @@ const DashboardPage: React.FC = () => {
             </div>
           )}
 
+          {activeTab === 'insights' && (
+            <ProfileInsights />
+          )}
+
           {activeTab === 'documents' && (
             <div className="space-y-6">
               {/* Document Upload Section */}
@@ -474,6 +559,11 @@ const DashboardPage: React.FC = () => {
                                     <span className="text-sm text-gray-700 dark:text-gray-300 truncate">
                                       {doc.name}
                                     </span>
+                                    {doc.confidenceScore && (
+                                      <span className="text-xs text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/20 px-2 py-1 rounded">
+                                        {doc.confidenceScore}%
+                                      </span>
+                                    )}
                                   </div>
                                   <div className="flex items-center space-x-1">
                                     <Button variant="ghost" size="sm" leftIcon={<Eye size={12} />}>
@@ -525,10 +615,10 @@ const DashboardPage: React.FC = () => {
                             Status
                           </th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Upload Date
+                            AI Confidence
                           </th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Size
+                            Upload Date
                           </th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             Actions
@@ -561,11 +651,20 @@ const DashboardPage: React.FC = () => {
                                 </span>
                               </div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                              {formatDate(document.uploadDate)}
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              {document.confidenceScore ? (
+                                <div className="flex items-center">
+                                  <Brain className="w-4 h-4 text-purple-500 mr-1" />
+                                  <span className="text-sm font-medium text-purple-600 dark:text-purple-400">
+                                    {document.confidenceScore}%
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className="text-sm text-gray-500 dark:text-gray-400">-</span>
+                              )}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                              {formatFileSize(document.size)}
+                              {formatDate(document.uploadDate)}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                               <div className="flex items-center space-x-2">
@@ -753,7 +852,7 @@ const DashboardPage: React.FC = () => {
                       <h4 className="text-lg font-medium text-gray-900 dark:text-white">Upload Documents</h4>
                     </div>
                     <p className="text-gray-600 dark:text-gray-400 mb-4">
-                      Upload your academic transcripts, CV, and other required documents.
+                      Upload your academic transcripts, CV, and other required documents for AI analysis.
                     </p>
                     <Button className="w-full" leftIcon={<Upload size={16} />}>
                       Go to Documents
@@ -770,7 +869,7 @@ const DashboardPage: React.FC = () => {
                       <h4 className="text-lg font-medium text-gray-900 dark:text-white">Explore Universities</h4>
                     </div>
                     <p className="text-gray-600 dark:text-gray-400 mb-4">
-                      Browse and discover universities that match your preferences.
+                      Browse and discover universities that match your AI-analyzed profile and preferences.
                     </p>
                     <Button variant="outline" className="w-full" leftIcon={<GraduationCap size={16} />}>
                       Browse Universities
