@@ -229,7 +229,7 @@ const CourseList: React.FC = () => {
                     <option value="">Any Duration</option>
                     <option value="short">Short (≤ 3 months)</option>
                     <option value="medium">Medium (3-12 months)</option>
-                    <option value="long">Long (> 12 months)</option>
+                    <option value="long">Long (&gt; 12 months)</option>
                   </select>
                 </div>
 
