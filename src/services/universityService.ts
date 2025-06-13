@@ -55,14 +55,25 @@ class UniversityService {
   private universities: UniversityData[] = [];
   private isLoaded = false;
 
-  // Define allowed countries/regions
+  // Define allowed countries - UPDATED to match your requirements
   private allowedCountries = new Set([
     // Australia
     'Australia',
     
+    // China
+    'China',
+    'Hong Kong',
+    'Macau',
+    
+    // Canada
+    'Canada',
+    
     // United States
     'United States',
     'United States of America',
+    
+    // Ireland
+    'Ireland',
     
     // United Kingdom
     'United Kingdom',
@@ -71,44 +82,17 @@ class UniversityService {
     'Wales',
     'Northern Ireland',
     
-    // Canada
-    'Canada',
-    
-    // China
-    'China',
-    'Hong Kong',
-    'Macau',
-    
-    // European Countries
+    // Germany
     'Germany',
+    
+    // France
     'France',
-    'Netherlands',
-    'Sweden',
-    'Norway',
-    'Denmark',
-    'Finland',
-    'Switzerland',
-    'Austria',
+    
+    // Belgium
     'Belgium',
-    'Ireland',
-    'Italy',
-    'Spain',
-    'Portugal',
-    'Poland',
-    'Czech Republic',
-    'Hungary',
-    'Estonia',
-    'Latvia',
-    'Lithuania',
-    'Slovenia',
-    'Slovakia',
-    'Croatia',
-    'Romania',
-    'Bulgaria',
-    'Greece',
-    'Cyprus',
-    'Malta',
-    'Luxembourg'
+    
+    // Netherlands
+    'Netherlands'
   ]);
 
   // Course categories with specific courses
@@ -413,12 +397,47 @@ class UniversityService {
         livingCosts: '$12,000 - $20,000',
         totalEstimate: isPremium ? '$60,000 - $95,000' : isPrivate ? '$40,000 - $75,000' : '$30,000 - $55,000'
       },
+      'United States of America': {
+        currency: 'USD',
+        tuitionFee: isPremium ? '$45,000 - $75,000' : isPrivate ? '$25,000 - $55,000' : '$15,000 - $35,000',
+        applicationFee: '$50 - $150',
+        livingCosts: '$12,000 - $20,000',
+        totalEstimate: isPremium ? '$60,000 - $95,000' : isPrivate ? '$40,000 - $75,000' : '$30,000 - $55,000'
+      },
       'United Kingdom': {
         currency: 'GBP',
         tuitionFee: isPremium ? '£25,000 - £45,000' : isPrivate ? '£18,000 - £35,000' : '£12,000 - £25,000',
         applicationFee: '£20 - £75',
         livingCosts: '£10,000 - £15,000',
         totalEstimate: isPremium ? '£35,000 - £60,000' : isPrivate ? '£28,000 - £50,000' : '£22,000 - £40,000'
+      },
+      'England': {
+        currency: 'GBP',
+        tuitionFee: isPremium ? '£25,000 - £45,000' : isPrivate ? '£18,000 - £35,000' : '£12,000 - £25,000',
+        applicationFee: '£20 - £75',
+        livingCosts: '£10,000 - £15,000',
+        totalEstimate: isPremium ? '£35,000 - £60,000' : isPrivate ? '£28,000 - £50,000' : '£22,000 - £40,000'
+      },
+      'Scotland': {
+        currency: 'GBP',
+        tuitionFee: isPremium ? '£25,000 - £45,000' : isPrivate ? '£18,000 - £35,000' : '£12,000 - £25,000',
+        applicationFee: '£20 - £75',
+        livingCosts: '£9,000 - £14,000',
+        totalEstimate: isPremium ? '£34,000 - £59,000' : isPrivate ? '£27,000 - £49,000' : '£21,000 - £39,000'
+      },
+      'Wales': {
+        currency: 'GBP',
+        tuitionFee: isPremium ? '£25,000 - £45,000' : isPrivate ? '£18,000 - £35,000' : '£12,000 - £25,000',
+        applicationFee: '£20 - £75',
+        livingCosts: '£9,000 - £13,000',
+        totalEstimate: isPremium ? '£34,000 - £58,000' : isPrivate ? '£27,000 - £48,000' : '£21,000 - £38,000'
+      },
+      'Northern Ireland': {
+        currency: 'GBP',
+        tuitionFee: isPremium ? '£25,000 - £45,000' : isPrivate ? '£18,000 - £35,000' : '£12,000 - £25,000',
+        applicationFee: '£20 - £75',
+        livingCosts: '£8,000 - £12,000',
+        totalEstimate: isPremium ? '£33,000 - £57,000' : isPrivate ? '£26,000 - £47,000' : '£20,000 - £37,000'
       },
       'Canada': {
         currency: 'CAD',
@@ -455,26 +474,19 @@ class UniversityService {
         livingCosts: '€10,000 - €15,000',
         totalEstimate: isPremium ? '€25,000 - €40,000' : '€18,000 - €33,000'
       },
-      'Sweden': {
-        currency: 'SEK',
-        tuitionFee: 'SEK 80,000 - 140,000',
-        applicationFee: 'SEK 900',
-        livingCosts: 'SEK 85,000 - 120,000',
-        totalEstimate: 'SEK 165,000 - 260,000'
+      'Belgium': {
+        currency: 'EUR',
+        tuitionFee: isPrivate ? '€8,000 - €20,000' : '€835 - €4,175',
+        applicationFee: '€50 - €100',
+        livingCosts: '€8,000 - €12,000',
+        totalEstimate: isPrivate ? '€16,000 - €32,000' : '€9,000 - €16,000'
       },
-      'Norway': {
-        currency: 'NOK',
-        tuitionFee: isPrivate ? 'NOK 50,000 - 150,000' : 'Free',
-        applicationFee: 'NOK 600',
-        livingCosts: 'NOK 120,000 - 180,000',
-        totalEstimate: isPrivate ? 'NOK 170,000 - 330,000' : 'NOK 120,000 - 180,000'
-      },
-      'Switzerland': {
-        currency: 'CHF',
-        tuitionFee: 'CHF 1,000 - 4,000',
-        applicationFee: 'CHF 50 - 150',
-        livingCosts: 'CHF 18,000 - 28,000',
-        totalEstimate: 'CHF 19,000 - 32,000'
+      'Ireland': {
+        currency: 'EUR',
+        tuitionFee: isPremium ? '€20,000 - €35,000' : '€10,000 - €25,000',
+        applicationFee: '€50 - €150',
+        livingCosts: '€9,000 - €15,000',
+        totalEstimate: isPremium ? '€29,000 - €50,000' : '€19,000 - €40,000'
       },
       'China': {
         currency: 'CNY',
@@ -489,6 +501,13 @@ class UniversityService {
         applicationFee: 'HK$300 - 500',
         livingCosts: 'HK$80,000 - 120,000',
         totalEstimate: 'HK$220,000 - 400,000'
+      },
+      'Macau': {
+        currency: 'MOP',
+        tuitionFee: 'MOP$50,000 - 120,000',
+        applicationFee: 'MOP$200 - 500',
+        livingCosts: 'MOP$40,000 - 80,000',
+        totalEstimate: 'MOP$90,000 - 200,000'
       }
     };
 
@@ -557,16 +576,22 @@ class UniversityService {
   private generateTuitionRange(country: string): string {
     const ranges: Record<string, string> = {
       'United States': '$20,000 - $60,000',
+      'United States of America': '$20,000 - $60,000',
       'United Kingdom': '$15,000 - $45,000',
+      'England': '$15,000 - $45,000',
+      'Scotland': '$15,000 - $45,000',
+      'Wales': '$15,000 - $45,000',
+      'Northern Ireland': '$15,000 - $45,000',
       'Canada': '$12,000 - $35,000',
       'Australia': '$18,000 - $50,000',
       'Germany': '$500 - $3,000',
       'France': '$200 - $15,000',
       'Netherlands': '$2,000 - $20,000',
-      'Sweden': 'Free - $15,000',
-      'Norway': 'Free - $10,000',
+      'Belgium': '$1,000 - $15,000',
+      'Ireland': '$10,000 - $30,000',
       'China': '$3,000 - $15,000',
-      'Hong Kong': '$15,000 - $30,000'
+      'Hong Kong': '$15,000 - $30,000',
+      'Macau': '$8,000 - $20,000'
     };
     
     return ranges[country] || '$5,000 - $25,000';
@@ -586,7 +611,7 @@ class UniversityService {
   }
 
   private getLanguageTest(country: string): string {
-    const englishSpeaking = ['United States', 'United Kingdom', 'Canada', 'Australia', 'New Zealand', 'Ireland'];
+    const englishSpeaking = ['United States', 'United States of America', 'United Kingdom', 'England', 'Scotland', 'Wales', 'Northern Ireland', 'Canada', 'Australia', 'Ireland'];
     
     if (englishSpeaking.includes(country)) {
       return Math.random() > 0.5 ? 'IELTS 6.5' : 'TOEFL 90';
@@ -595,13 +620,11 @@ class UniversityService {
     const tests: Record<string, string> = {
       'Germany': 'German B2 or IELTS 6.5',
       'France': 'French B2 or IELTS 6.5',
-      'Spain': 'Spanish B2 or IELTS 6.5',
-      'Italy': 'Italian B2 or IELTS 6.5',
+      'Belgium': 'Dutch/French B2 or IELTS 6.5',
       'Netherlands': 'IELTS 6.5',
-      'Sweden': 'IELTS 6.5',
-      'Norway': 'IELTS 6.5',
       'China': 'HSK 4 or IELTS 6.0',
-      'Hong Kong': 'IELTS 6.0'
+      'Hong Kong': 'IELTS 6.0',
+      'Macau': 'Chinese/Portuguese B2 or IELTS 6.0'
     };
     
     return tests[country] || 'IELTS 6.5';
