@@ -520,7 +520,7 @@ class DocumentParsingService {
         .from('student_profiles')
         .select('*')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle();
 
       // Merge parsed data with existing profile
       const updatedProfile = this.mergeProfileData(existingProfile, parsedData);
@@ -721,7 +721,7 @@ class DocumentParsingService {
       .from('student_profiles')
       .select('*')
       .eq('user_id', userId)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('Error fetching student profile:', error);
