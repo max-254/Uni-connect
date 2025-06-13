@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, GraduationCap } from 'lucide-react';
+import { ArrowRight, GraduationCap, Search, MapPin, BookOpen, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { universityService } from '../../services/universityService';
 import Button from '../ui/Button';
@@ -39,206 +39,201 @@ const Hero: React.FC = () => {
   };
 
   return (
-    <div className="relative bg-gradient-to-r from-blue-600 to-purple-600 overflow-hidden">
-      {/* Decorative elements */}
-      <div className="hidden lg:block lg:absolute lg:inset-0">
-        <svg
-          className="absolute left-full transform -translate-y-3/4 -translate-x-1/4 md:-translate-y-1/2 lg:-translate-x-1/2"
-          width="404"
-          height="784"
-          fill="none"
-          viewBox="0 0 404 784"
-        >
+    <div className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-purple-700 overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-white bg-opacity-10 rounded-full blur-xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-48 h-48 bg-white bg-opacity-5 rounded-full blur-2xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-white bg-opacity-15 rounded-full blur-lg animate-pulse delay-500"></div>
+      </div>
+
+      {/* Decorative Grid Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <pattern
-              id="5d0dd344-b041-4d26-bec4-8d33ea57ec9b"
-              x="0"
-              y="0"
-              width="20"
-              height="20"
-              patternUnits="userSpaceOnUse"
-            >
-              <rect x="0" y="0" width="4" height="4" fill="rgba(255, 255, 255, 0.1)" />
+            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1"/>
             </pattern>
           </defs>
-          <rect width="404" height="784" fill="url(#5d0dd344-b041-4d26-bec4-8d33ea57ec9b)" />
+          <rect width="100%" height="100%" fill="url(#grid)" />
         </svg>
       </div>
 
-      <div className="relative pt-6 pb-16 sm:pb-24">
-        <main className="mt-16 sm:mt-24">
-          <div className="mx-auto max-w-7xl">
-            <div className="lg:grid lg:grid-cols-12 lg:gap-8">
-              <div className="px-4 sm:px-6 sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left lg:flex lg:items-center">
-                <div>
-                  <div className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                    <GraduationCap size={16} className="mr-1" />
-                    Now open for 2025 applications
+      <div className="relative px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            {/* Left Content */}
+            <div className="text-center lg:text-left">
+              {/* Badge */}
+              <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800 mb-6">
+                <GraduationCap size={16} className="mr-2" />
+                Now open for 2025 applications
+              </div>
+
+              {/* Main Heading */}
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6">
+                Find Your Perfect
+                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-purple-200">
+                  University Match
+                </span>
+                <span className="block">Abroad</span>
+              </h1>
+
+              {/* Subtitle */}
+              <p className="text-lg sm:text-xl text-blue-100 mb-8 max-w-2xl mx-auto lg:mx-0">
+                Explore thousands of universities worldwide. Get matched with institutions that fit your qualifications, 
+                and receive guidance throughout your application journey.
+              </p>
+
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
+                <Button
+                  onClick={() => navigate('/universities')}
+                  className="bg-white text-blue-700 hover:bg-blue-50 px-8 py-4 text-lg font-semibold"
+                  rightIcon={<ArrowRight size={20} />}
+                >
+                  Explore Universities
+                </Button>
+                <Button
+                  variant="outline"
+                  className="border-white text-white hover:bg-white hover:text-blue-700 px-8 py-4 text-lg font-semibold"
+                  onClick={() => navigate('/about')}
+                >
+                  Learn More
+                </Button>
+              </div>
+
+              {/* Trust Indicators */}
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6 text-blue-100">
+                <div className="flex items-center">
+                  <div className="flex -space-x-2">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <div
+                        key={i}
+                        className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 border-2 border-white flex items-center justify-center text-white text-xs font-bold"
+                      >
+                        {String.fromCharCode(64 + i)}
+                      </div>
+                    ))}
                   </div>
-                  <h1 className="mt-4 text-4xl tracking-tight font-extrabold text-white sm:mt-5 sm:text-5xl lg:mt-6 xl:text-6xl">
-                    <span className="block">Find Your Perfect</span>
-                    <span className="block text-blue-200">University Match Abroad</span>
-                  </h1>
-                  <p className="mt-3 text-base text-blue-100 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                    Explore thousands of universities worldwide. Get matched with institutions that fit your qualifications, 
-                    and receive guidance throughout your application journey.
-                  </p>
-                  <div className="mt-8 sm:mt-10">
-                    <div className="sm:flex sm:justify-center lg:justify-start">
-                      <div className="rounded-md shadow">
-                        <button
-                          onClick={() => navigate('/universities')}
-                          className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 md:py-4 md:text-lg md:px-10 transition-colors"
-                        >
-                          Explore Universities
-                        </button>
-                      </div>
-                      <div className="mt-3 sm:mt-0 sm:ml-3">
-                        <a
-                          href="/about"
-                          className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-800 bg-opacity-60 hover:bg-opacity-70 md:py-4 md:text-lg md:px-10 transition-colors"
-                        >
-                          Learn More
-                        </a>
-                      </div>
-                    </div>
-                    
-                    <div className="mt-6 sm:mt-8">
-                      <p className="text-xs text-blue-200 uppercase tracking-wide font-semibold">
-                        Trusted by students from over 50 countries
-                      </p>
-                      <div className="mt-2 w-full flex justify-center lg:justify-start">
-                        <div className="flex items-center space-x-6">
-                          <div className="flex items-center">
-                            <div className="flex -space-x-1 overflow-hidden">
-                              {[1, 2, 3, 4, 5].map((i) => (
-                                <div
-                                  key={i}
-                                  className={`inline-block h-6 w-6 rounded-full ring-2 ring-white bg-blue-${400 + i * 100} text-xs text-white flex items-center justify-center font-medium`}
-                                >
-                                  {String.fromCharCode(64 + i)}
-                                </div>
-                              ))}
-                            </div>
-                            <span className="ml-3 text-sm font-medium text-blue-100">+15K Users</span>
-                          </div>
-                          <div className="h-4 w-px bg-blue-400" />
-                          <div className="text-sm font-medium text-blue-100">4.9 ★★★★★</div>
-                        </div>
-                      </div>
-                    </div>
+                  <span className="ml-3 font-medium">15,000+ Students</span>
+                </div>
+                <div className="hidden sm:block w-px h-6 bg-blue-300"></div>
+                <div className="flex items-center">
+                  <div className="flex text-yellow-400">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Star key={i} size={16} fill="currentColor" />
+                    ))}
                   </div>
+                  <span className="ml-2 font-medium">4.9/5 Rating</span>
+                </div>
+                <div className="hidden sm:block w-px h-6 bg-blue-300"></div>
+                <div className="flex items-center">
+                  <MapPin size={16} className="mr-2" />
+                  <span className="font-medium">50+ Countries</span>
                 </div>
               </div>
-              
-              <div className="mt-16 sm:mt-24 lg:mt-0 lg:col-span-6">
-                <div className="bg-white sm:max-w-md sm:w-full sm:mx-auto sm:rounded-lg sm:overflow-hidden">
-                  <div className="px-4 py-8 sm:px-10">
-                    <div>
-                      <p className="text-lg font-medium text-gray-700 text-center">
-                        Quick University Search
-                      </p>
-                      <p className="text-sm text-gray-500 mt-2 text-center">
-                        Find programs matching your preferences
-                      </p>
-                    </div>
+            </div>
 
-                    <div className="mt-6">
-                      <form onSubmit={handleSubmit} className="space-y-6">
-                        <div>
-                          <label htmlFor="study-level" className="sr-only">
-                            Study Level
-                          </label>
-                          <select
-                            id="study-level"
-                            name="studyLevel"
-                            value={formData.studyLevel}
-                            onChange={handleInputChange}
-                            className="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md py-2 px-3"
-                          >
-                            <option value="">Select Study Level</option>
-                            {studyLevels.map(level => (
-                              <option key={level.id} value={level.id}>{level.name}</option>
-                            ))}
-                          </select>
-                        </div>
-
-                        <div>
-                          <label htmlFor="field-of-study" className="sr-only">
-                            Field of Study
-                          </label>
-                          <select
-                            id="field-of-study"
-                            name="fieldOfStudy"
-                            value={formData.fieldOfStudy}
-                            onChange={handleInputChange}
-                            className="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md py-2 px-3"
-                          >
-                            <option value="">Select Field of Study</option>
-                            {courses.slice(0, 20).map(course => (
-                              <option key={course} value={course}>{course}</option>
-                            ))}
-                          </select>
-                        </div>
-
-                        <div>
-                          <label htmlFor="country" className="sr-only">
-                            Destination Country
-                          </label>
-                          <select
-                            id="country"
-                            name="country"
-                            value={formData.country}
-                            onChange={handleInputChange}
-                            className="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md py-2 px-3"
-                          >
-                            <option value="">Select Destination Country</option>
-                            <option value="United States">United States</option>
-                            <option value="United Kingdom">United Kingdom</option>
-                            <option value="Canada">Canada</option>
-                            <option value="Australia">Australia</option>
-                            <option value="Germany">Germany</option>
-                            <option value="Netherlands">Netherlands</option>
-                            <option value="France">France</option>
-                            <option value="Sweden">Sweden</option>
-                            <option value="Norway">Norway</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <Button 
-                            className="w-full" 
-                            rightIcon={<ArrowRight size={16} />}
-                            type="submit"
-                          >
-                            Find Universities
-                          </Button>
-                        </div>
-                      </form>
-                    </div>
+            {/* Right Content - Search Form */}
+            <div className="w-full max-w-md mx-auto lg:max-w-none">
+              <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8">
+                <div className="text-center mb-6">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-xl mb-4">
+                    <Search className="w-6 h-6 text-blue-600" />
                   </div>
-                  <div className="px-4 py-6 bg-gray-50 border-t-2 border-gray-200 sm:px-10">
-                    <p className="text-xs leading-5 text-gray-500">
-                      By using our service, you agree to our{' '}
-                      <a href="#" className="font-medium text-gray-900 hover:underline">
-                        Terms
-                      </a>
-                      ,{' '}
-                      <a href="#" className="font-medium text-gray-900 hover:underline">
-                        Data Policy
-                      </a>{' '}
-                      and{' '}
-                      <a href="#" className="font-medium text-gray-900 hover:underline">
-                        Cookies Policy
-                      </a>
-                      .
-                    </p>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    Quick University Search
+                  </h3>
+                  <p className="text-gray-600">
+                    Find programs matching your preferences
+                  </p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  {/* Study Level */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Study Level
+                    </label>
+                    <select
+                      name="studyLevel"
+                      value={formData.studyLevel}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    >
+                      <option value="">Select Study Level</option>
+                      {studyLevels.map(level => (
+                        <option key={level.id} value={level.id}>{level.name}</option>
+                      ))}
+                    </select>
                   </div>
+
+                  {/* Field of Study */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Field of Study
+                    </label>
+                    <select
+                      name="fieldOfStudy"
+                      value={formData.fieldOfStudy}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    >
+                      <option value="">Select Field of Study</option>
+                      {courses.slice(0, 20).map(course => (
+                        <option key={course} value={course}>{course}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Country */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Destination Country
+                    </label>
+                    <select
+                      name="country"
+                      value={formData.country}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    >
+                      <option value="">Select Destination Country</option>
+                      <option value="United States">🇺🇸 United States</option>
+                      <option value="United Kingdom">🇬🇧 United Kingdom</option>
+                      <option value="Canada">🇨🇦 Canada</option>
+                      <option value="Australia">🇦🇺 Australia</option>
+                      <option value="Germany">🇩🇪 Germany</option>
+                      <option value="Netherlands">🇳🇱 Netherlands</option>
+                      <option value="France">🇫🇷 France</option>
+                      <option value="Sweden">🇸🇪 Sweden</option>
+                      <option value="Norway">🇳🇴 Norway</option>
+                    </select>
+                  </div>
+
+                  {/* Submit Button */}
+                  <Button 
+                    type="submit"
+                    className="w-full py-4 text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                    rightIcon={<ArrowRight size={20} />}
+                  >
+                    Find Universities
+                  </Button>
+                </form>
+
+                {/* Footer */}
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <p className="text-xs text-gray-500 text-center">
+                    By using our service, you agree to our{' '}
+                    <a href="/terms" className="text-blue-600 hover:underline">Terms</a>,{' '}
+                    <a href="/privacy" className="text-blue-600 hover:underline">Privacy Policy</a>, and{' '}
+                    <a href="/cookies" className="text-blue-600 hover:underline">Cookie Policy</a>.
+                  </p>
                 </div>
               </div>
             </div>
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );

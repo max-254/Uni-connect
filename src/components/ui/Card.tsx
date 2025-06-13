@@ -10,8 +10,8 @@ const Card = ({ children, className = '', hoverable = false }: CardProps) => {
   return (
     <div 
       className={`
-        bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm 
-        ${hoverable ? 'transition-shadow hover:shadow-md' : ''}
+        bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm 
+        ${hoverable ? 'transition-all duration-200 hover:shadow-lg hover:scale-[1.02] hover:border-gray-300 dark:hover:border-gray-600' : ''}
         ${className}
       `}
     >
