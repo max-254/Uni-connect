@@ -19,7 +19,9 @@ import {
   BarChart3,
   Brain,
   Zap,
-  Target
+  Target,
+  Heart,
+  Star
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -27,8 +29,11 @@ import { Card, CardHeader, CardBody } from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import ProfileInsights from '../components/profile/ProfileInsights';
 import UniversityRecommendations from '../components/matching/UniversityRecommendations';
+import FavoritesManager from '../components/applications/FavoritesManager';
+import ApplicationTracker from '../components/applications/ApplicationTracker';
 import { useAuth } from '../context/AuthContext';
 import { documentParsingService } from '../services/documentParsingService';
+import { applicationService } from '../services/applicationService';
 
 interface Document {
   id: string;
@@ -42,16 +47,6 @@ interface Document {
   confidenceScore?: number;
 }
 
-interface Application {
-  id: string;
-  universityName: string;
-  program: string;
-  status: 'draft' | 'submitted' | 'under-review' | 'accepted' | 'rejected';
-  submissionDate?: Date;
-  deadline: Date;
-  progress: number;
-}
-
 interface ProfileCompletion {
   personalInfo: boolean;
   academicBackground: boolean;
@@ -62,7 +57,7 @@ interface ProfileCompletion {
 
 const DashboardPage: React.FC = () => {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<'overview' | 'documents' | 'applications' | 'profile' | 'insights' | 'recommendations'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'documents' | 'applications' | 'profile' | 'insights' | 'recommendations' | 'favorites'>('overview');
   const [documents, setDocuments] = useState<Document[]>([
     {
       id: '1',
@@ -96,35 +91,6 @@ const DashboardPage: React.FC = () => {
     }
   ]);
 
-  const [applications, setApplications] = useState<Application[]>([
-    {
-      id: '1',
-      universityName: 'University of Toronto',
-      program: 'Computer Science',
-      status: 'submitted',
-      submissionDate: new Date('2024-01-10'),
-      deadline: new Date('2024-03-15'),
-      progress: 100
-    },
-    {
-      id: '2',
-      universityName: 'MIT',
-      program: 'Artificial Intelligence',
-      status: 'under-review',
-      submissionDate: new Date('2024-01-15'),
-      deadline: new Date('2024-02-28'),
-      progress: 100
-    },
-    {
-      id: '3',
-      universityName: 'Stanford University',
-      program: 'Data Science',
-      status: 'draft',
-      deadline: new Date('2024-04-01'),
-      progress: 65
-    }
-  ]);
-
   const [profileCompletion, setProfileCompletion] = useState<ProfileCompletion>({
     personalInfo: true,
     academicBackground: true,
@@ -135,10 +101,14 @@ const DashboardPage: React.FC = () => {
 
   const [studentProfile, setStudentProfile] = useState<any>(null);
   const [parsedDocuments, setParsedDocuments] = useState<any[]>([]);
+  const [applicationStats, setApplicationStats] = useState<any>(null);
+  const [favoriteStats, setFavoriteStats] = useState<any>(null);
 
   useEffect(() => {
     if (user) {
       loadStudentData();
+      loadApplicationStats();
+      loadFavoriteStats();
     }
   }, [user]);
 
@@ -165,6 +135,27 @@ const DashboardPage: React.FC = () => {
     }
   };
 
+  const loadApplicationStats = async () => {
+    try {
+      const stats = await applicationService.getApplicationStats(user!.id);
+      setApplicationStats(stats);
+    } catch (error) {
+      console.error('Error loading application stats:', error);
+    }
+  };
+
+  const loadFavoriteStats = async () => {
+    try {
+      const favorites = await applicationService.getFavorites(user!.id);
+      setFavoriteStats({
+        total: favorites.length,
+        countries: [...new Set(favorites.map(f => f.university_country))].length
+      });
+    } catch (error) {
+      console.error('Error loading favorite stats:', error);
+    }
+  };
+
   const getStatusIcon = (status: Document['status']) => {
     switch (status) {
       case 'verified':
@@ -175,21 +166,6 @@ const DashboardPage: React.FC = () => {
         return <AlertCircle className="h-4 w-4 text-red-500" />;
       default:
         return <Upload className="h-4 w-4 text-gray-400" />;
-    }
-  };
-
-  const getStatusColor = (status: Application['status']) => {
-    switch (status) {
-      case 'accepted':
-        return 'text-green-600 bg-green-100 dark:bg-green-900/20 dark:text-green-400';
-      case 'submitted':
-        return 'text-blue-600 bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400';
-      case 'under-review':
-        return 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/20 dark:text-yellow-400';
-      case 'rejected':
-        return 'text-red-600 bg-red-100 dark:bg-red-900/20 dark:text-red-400';
-      default:
-        return 'text-gray-600 bg-gray-100 dark:bg-gray-700 dark:text-gray-300';
     }
   };
 
@@ -207,13 +183,6 @@ const DashboardPage: React.FC = () => {
       month: 'short',
       day: 'numeric'
     });
-  };
-
-  const getDaysUntilDeadline = (deadline: Date) => {
-    const today = new Date();
-    const diffTime = deadline.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
   };
 
   const getAIInsightsSummary = () => {
@@ -337,9 +306,10 @@ const DashboardPage: React.FC = () => {
                 {[
                   { id: 'overview', label: 'Overview', icon: BarChart3 },
                   { id: 'recommendations', label: 'AI Matches', icon: Target },
+                  { id: 'applications', label: 'Applications', icon: GraduationCap },
+                  { id: 'favorites', label: 'Favorites', icon: Heart },
                   { id: 'insights', label: 'AI Insights', icon: Brain },
                   { id: 'documents', label: 'Documents', icon: FileText },
-                  { id: 'applications', label: 'Applications', icon: GraduationCap },
                   { id: 'profile', label: 'Profile', icon: User }
                 ].map((tab) => (
                   <button
@@ -372,7 +342,9 @@ const DashboardPage: React.FC = () => {
                       </div>
                       <div className="ml-4">
                         <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Applications</p>
-                        <p className="text-2xl font-bold text-gray-900 dark:text-white">{applications.length}</p>
+                        <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                          {applicationStats?.total || 0}
+                        </p>
                       </div>
                     </div>
                   </CardBody>
@@ -387,7 +359,7 @@ const DashboardPage: React.FC = () => {
                       <div className="ml-4">
                         <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Submitted</p>
                         <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                          {applications.filter(app => app.status === 'submitted' || app.status === 'under-review').length}
+                          {applicationStats ? (applicationStats.byStatus.submitted || 0) + (applicationStats.byStatus['under-review'] || 0) : 0}
                         </p>
                       </div>
                     </div>
@@ -397,12 +369,14 @@ const DashboardPage: React.FC = () => {
                 <Card>
                   <CardBody className="p-6">
                     <div className="flex items-center">
-                      <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
-                        <FileText className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                      <div className="w-12 h-12 bg-red-100 dark:bg-red-900 rounded-lg flex items-center justify-center">
+                        <Heart className="w-6 h-6 text-red-600 dark:text-red-400" />
                       </div>
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Documents</p>
-                        <p className="text-2xl font-bold text-gray-900 dark:text-white">{documents.length}</p>
+                        <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Favorites</p>
+                        <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                          {favoriteStats?.total || 0}
+                        </p>
                       </div>
                     </div>
                   </CardBody>
@@ -412,7 +386,6 @@ const DashboardPage: React.FC = () => {
                   <CardBody className="p-6">
                     <div className="flex items-center">
                       <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-lg flex items-center justify-center">
-                
                         <TrendingUp className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
                       </div>
                       <div className="ml-4">
@@ -429,84 +402,180 @@ const DashboardPage: React.FC = () => {
                 {/* Recent Applications */}
                 <Card>
                   <CardHeader>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Applications</h3>
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Applications</h3>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setActiveTab('applications')}
+                      >
+                        View All
+                      </Button>
+                    </div>
                   </CardHeader>
                   <CardBody className="p-0">
-                    <div className="divide-y divide-gray-200 dark:divide-gray-700">
-                      {applications.slice(0, 3).map((application) => (
-                        <div key={application.id} className="p-6">
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                              <h4 className="text-sm font-medium text-gray-900 dark:text-white">
-                                {application.universityName}
-                              </h4>
-                              <p className="text-sm text-gray-600 dark:text-gray-400">
-                                {application.program}
-                              </p>
+                    {applicationStats?.recentActivity?.length > 0 ? (
+                      <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                        {applicationStats.recentActivity.slice(0, 3).map((application: any) => (
+                          <div key={application.id} className="p-6">
+                            <div className="flex items-center justify-between">
+                              <div className="flex-1">
+                                <h4 className="text-sm font-medium text-gray-900 dark:text-white">
+                                  {application.university_name}
+                                </h4>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                  {application.program_name}
+                                </p>
+                              </div>
+                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${applicationService.getStatusColor(application.status)}`}>
+                                {applicationService.getStatusText(application.status)}
+                              </span>
                             </div>
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(application.status)}`}>
-                              {application.status.replace('-', ' ')}
-                            </span>
+                            <div className="mt-3">
+                              <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+                                <span>Progress</span>
+                                <span>{application.progress_percentage}%</span>
+                              </div>
+                              <div className="mt-1 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                <div 
+                                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                  style={{ width: `${application.progress_percentage}%` }}
+                                />
+                              </div>
+                            </div>
                           </div>
-                          <div className="mt-3">
-                            <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-                              <span>Progress</span>
-                              <span>{application.progress}%</span>
-                            </div>
-                            <div className="mt-1 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                              <div 
-                                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${application.progress}%` }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="p-6 text-center">
+                        <GraduationCap className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-600 dark:text-gray-400">No applications yet</p>
+                        <Button
+                          size="sm"
+                          className="mt-2"
+                          onClick={() => window.location.href = '/universities'}
+                        >
+                          Start First Application
+                        </Button>
+                      </div>
+                    )}
                   </CardBody>
                 </Card>
 
                 {/* Upcoming Deadlines */}
                 <Card>
                   <CardHeader>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Upcoming Deadlines</h3>
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Upcoming Deadlines</h3>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setActiveTab('applications')}
+                      >
+                        View All
+                      </Button>
+                    </div>
                   </CardHeader>
                   <CardBody className="p-0">
-                    <div className="divide-y divide-gray-200 dark:divide-gray-700">
-                      {applications
-                        .filter(app => app.status === 'draft' || app.status === 'submitted')
-                        .sort((a, b) => a.deadline.getTime() - b.deadline.getTime())
-                        .slice(0, 3)
-                        .map((application) => {
-                          const daysLeft = getDaysUntilDeadline(application.deadline);
+                    {applicationStats?.upcomingDeadlines?.length > 0 ? (
+                      <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                        {applicationStats.upcomingDeadlines.slice(0, 3).map((application: any) => {
+                          const deadlineStatus = applicationService.getDeadlineStatus(application.deadline);
                           return (
                             <div key={application.id} className="p-6">
                               <div className="flex items-center justify-between">
                                 <div className="flex-1">
                                   <h4 className="text-sm font-medium text-gray-900 dark:text-white">
-                                    {application.universityName}
+                                    {application.university_name}
                                   </h4>
                                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                                    {application.program}
+                                    {application.program_name}
                                   </p>
                                 </div>
                                 <div className="text-right">
-                                  <p className={`text-sm font-medium ${
-                                    daysLeft <= 7 ? 'text-red-600 dark:text-red-400' : 
-                                    daysLeft <= 30 ? 'text-yellow-600 dark:text-yellow-400' : 
-                                    'text-green-600 dark:text-green-400'
-                                  }`}>
-                                    {daysLeft} days left
+                                  <p className={`text-sm font-medium ${deadlineStatus.color}`}>
+                                    {deadlineStatus.text}
                                   </p>
                                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                                    {formatDate(application.deadline)}
+                                    {formatDate(new Date(application.deadline))}
                                   </p>
                                 </div>
                               </div>
                             </div>
                           );
                         })}
+                      </div>
+                    ) : (
+                      <div className="p-6 text-center">
+                        <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-600 dark:text-gray-400">No upcoming deadlines</p>
+                      </div>
+                    )}
+                  </CardBody>
+                </Card>
+              </div>
+
+              {/* Quick Actions */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card hoverable={true}>
+                  <CardBody className="p-6 text-center">
+                    <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mx-auto mb-4">
+                      <Target className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                     </div>
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                      Get AI Recommendations
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 mb-4">
+                      Discover universities that match your profile and preferences.
+                    </p>
+                    <Button
+                      className="w-full"
+                      onClick={() => setActiveTab('recommendations')}
+                    >
+                      View Matches
+                    </Button>
+                  </CardBody>
+                </Card>
+
+                <Card hoverable={true}>
+                  <CardBody className="p-6 text-center">
+                    <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mx-auto mb-4">
+                      <Plus className="w-6 h-6 text-green-600 dark:text-green-400" />
+                    </div>
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                      Start New Application
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 mb-4">
+                      Browse universities and start your application process.
+                    </p>
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => window.location.href = '/universities'}
+                    >
+                      Explore Universities
+                    </Button>
+                  </CardBody>
+                </Card>
+
+                <Card hoverable={true}>
+                  <CardBody className="p-6 text-center">
+                    <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center mx-auto mb-4">
+                      <FileText className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                      Upload Documents
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 mb-4">
+                      Upload and manage your academic documents with AI analysis.
+                    </p>
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => window.location.href = '/profile/documents'}
+                    >
+                      Manage Documents
+                    </Button>
                   </CardBody>
                 </Card>
               </div>
@@ -515,6 +584,14 @@ const DashboardPage: React.FC = () => {
 
           {activeTab === 'recommendations' && (
             <UniversityRecommendations />
+          )}
+
+          {activeTab === 'applications' && (
+            <ApplicationTracker />
+          )}
+
+          {activeTab === 'favorites' && (
+            <FavoritesManager />
           )}
 
           {activeTab === 'insights' && (
@@ -688,128 +765,6 @@ const DashboardPage: React.FC = () => {
                         ))}
                       </tbody>
                     </table>
-                  </div>
-                </CardBody>
-              </Card>
-            </div>
-          )}
-
-          {activeTab === 'applications' && (
-            <div className="space-y-6">
-              {/* Applications Overview */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card>
-                  <CardBody className="p-6 text-center">
-                    <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mx-auto mb-4">
-                      <GraduationCap className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Total Applications</h3>
-                    <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{applications.length}</p>
-                  </CardBody>
-                </Card>
-
-                <Card>
-                  <CardBody className="p-6 text-center">
-                    <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mx-auto mb-4">
-                      <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Submitted</h3>
-                    <p className="text-3xl font-bold text-green-600 dark:text-green-400">
-                      {applications.filter(app => app.status === 'submitted' || app.status === 'under-review').length}
-                    </p>
-                  </CardBody>
-                </Card>
-
-                <Card>
-                  <CardBody className="p-6 text-center">
-                    <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-lg flex items-center justify-center mx-auto mb-4">
-                      <Clock className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">In Progress</h3>
-                    <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
-                      {applications.filter(app => app.status === 'draft').length}
-                    </p>
-                  </CardBody>
-                </Card>
-              </div>
-
-              {/* Applications List */}
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">My Applications</h3>
-                    <Button leftIcon={<Plus size={16} />}>
-                      New Application
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardBody className="p-0">
-                  <div className="space-y-4 p-6">
-                    {applications.map((application) => (
-                      <div key={application.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center space-x-3 mb-2">
-                              <h4 className="text-lg font-medium text-gray-900 dark:text-white">
-                                {application.universityName}
-                              </h4>
-                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(application.status)}`}>
-                                {application.status.replace('-', ' ')}
-                              </span>
-                            </div>
-                            <p className="text-gray-600 dark:text-gray-400 mb-3">{application.program}</p>
-                            
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
-                              <div>
-                                <p className="text-gray-500 dark:text-gray-400">Deadline</p>
-                                <p className="font-medium text-gray-900 dark:text-white">
-                                  {formatDate(application.deadline)}
-                                </p>
-                              </div>
-                              {application.submissionDate && (
-                                <div>
-                                  <p className="text-gray-500 dark:text-gray-400">Submitted</p>
-                                  <p className="font-medium text-gray-900 dark:text-white">
-                                    {formatDate(application.submissionDate)}
-                                  </p>
-                                </div>
-                              )}
-                              <div>
-                                <p className="text-gray-500 dark:text-gray-400">Progress</p>
-                                <p className="font-medium text-gray-900 dark:text-white">
-                                  {application.progress}%
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="mt-4 sm:mt-0 sm:ml-6 flex flex-col sm:flex-row gap-2">
-                            <Button variant="outline" size="sm">
-                              View Details
-                            </Button>
-                            {application.status === 'draft' && (
-                              <Button size="sm">
-                                Continue Application
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-                        
-                        {/* Progress Bar */}
-                        <div className="mt-4">
-                          <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-1">
-                            <span>Application Progress</span>
-                            <span>{application.progress}%</span>
-                          </div>
-                          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                            <div 
-                              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                              style={{ width: `${application.progress}%` }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
                   </div>
                 </CardBody>
               </Card>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   MapPin, 
   GraduationCap, 
@@ -16,11 +16,14 @@ import {
   Clock,
   CheckCircle,
   Globe,
-  TrendingUp
+  TrendingUp,
+  Plus
 } from 'lucide-react';
 import { Card, CardBody } from '../ui/Card';
 import Button from '../ui/Button';
 import { University } from '../../services/universityService';
+import { applicationService } from '../../services/applicationService';
+import { useAuth } from '../../context/AuthContext';
 
 interface UniversityCardProps {
   university: University;
@@ -37,7 +40,9 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
   onViewDetails,
   viewMode = 'grid'
 }) => {
+  const { user, isAuthenticated } = useAuth();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -69,6 +74,51 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
     }
   };
 
+  const handleApplyNow = async () => {
+    if (!isAuthenticated) {
+      // Redirect to login
+      window.location.href = '/login';
+      return;
+    }
+
+    try {
+      setIsApplying(true);
+      
+      // Start application with the first available program
+      const programName = university.courses[0] || 'General Program';
+      await applicationService.startApplication(user!.id, university, programName);
+      
+      // Navigate to application form (you'd implement this route)
+      // window.location.href = `/applications/${applicationId}`;
+      
+      // For now, just show success message
+      alert(`Application started for ${university.name}!`);
+    } catch (error) {
+      console.error('Error starting application:', error);
+      alert('Failed to start application. Please try again.');
+    } finally {
+      setIsApplying(false);
+    }
+  };
+
+  const handleToggleFavorite = async () => {
+    if (!isAuthenticated) {
+      window.location.href = '/login';
+      return;
+    }
+
+    try {
+      if (isFavorite) {
+        await applicationService.removeFromFavorites(user!.id, university.id);
+      } else {
+        await applicationService.addToFavorites(user!.id, university);
+      }
+      onToggleFavorite(university.id);
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+    }
+  };
+
   const deadlineStatus = getDeadlineStatus(university.applicationDeadline);
 
   const renderGridView = () => (
@@ -91,7 +141,7 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
           
           <div className="flex items-center space-x-2 ml-2">
             <button
-              onClick={() => onToggleFavorite(university.id)}
+              onClick={handleToggleFavorite}
               className={`p-2 rounded-full transition-colors ${
                 isFavorite
                   ? 'text-red-500 bg-red-50 dark:bg-red-900/20'
@@ -185,17 +235,20 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
           <Button 
             className="w-full" 
             size="sm"
-            onClick={() => onViewDetails(university)}
+            onClick={handleApplyNow}
+            isLoading={isApplying}
+            leftIcon={<Plus size={14} />}
           >
-            View Details
+            {isApplying ? 'Starting...' : 'Apply Now'}
           </Button>
           <Button 
             variant="outline" 
             className="w-full" 
             size="sm"
-            leftIcon={<ExternalLink size={14} />}
+            onClick={() => onViewDetails(university)}
+            leftIcon={<BookOpen size={14} />}
           >
-            Apply Now
+            View Details
           </Button>
         </div>
       </CardBody>
@@ -215,7 +268,7 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
                     {university.name}
                   </h3>
                   <button
-                    onClick={() => onToggleFavorite(university.id)}
+                    onClick={handleToggleFavorite}
                     className={`p-2 rounded-full transition-colors ${
                       isFavorite
                         ? 'text-red-500 bg-red-50 dark:bg-red-900/20'
@@ -370,17 +423,19 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
             <div className="space-y-3">
               <Button 
                 className="w-full" 
-                onClick={() => onViewDetails(university)}
-                leftIcon={<BookOpen size={16} />}
+                onClick={handleApplyNow}
+                isLoading={isApplying}
+                leftIcon={<Plus size={16} />}
               >
-                View Full Details
+                {isApplying ? 'Starting Application...' : 'Apply Now'}
               </Button>
               <Button 
                 variant="outline" 
                 className="w-full"
-                leftIcon={<ExternalLink size={16} />}
+                onClick={() => onViewDetails(university)}
+                leftIcon={<BookOpen size={16} />}
               >
-                Apply Now
+                View Full Details
               </Button>
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
