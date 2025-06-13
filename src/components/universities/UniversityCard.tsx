@@ -31,6 +31,7 @@ interface UniversityCardProps {
   onToggleFavorite: (universityId: string) => void;
   onViewDetails: (university: University) => void;
   viewMode?: 'grid' | 'list';
+  highlightQuery?: string;
 }
 
 const UniversityCard: React.FC<UniversityCardProps> = ({
@@ -38,7 +39,8 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
   isFavorite,
   onToggleFavorite,
   onViewDetails,
-  viewMode = 'grid'
+  viewMode = 'grid',
+  highlightQuery = ''
 }) => {
   const { user, isAuthenticated } = useAuth();
   const [isExpanded, setIsExpanded] = useState(false);
@@ -117,6 +119,22 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
     } catch (error) {
       console.error('Error toggling favorite:', error);
     }
+  };
+
+  // Helper function to highlight matched text
+  const highlightMatchedText = (text: string, query: string) => {
+    if (!query.trim()) return text;
+    
+    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const parts = text.split(regex);
+    
+    return parts.map((part, index) => 
+      regex.test(part) ? (
+        <span key={index} className="bg-yellow-200 dark:bg-yellow-600 px-1 rounded">
+          {part}
+        </span>
+      ) : part
+    );
   };
 
   const deadlineStatus = getDeadlineStatus(university.applicationDeadline);
@@ -219,7 +237,7 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
                 key={idx}
                 className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200"
               >
-                {course}
+                {highlightMatchedText(course, highlightQuery)}
               </span>
             ))}
             {university.courses.length > 3 && (
@@ -323,7 +341,7 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
                         key={idx}
                         className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200"
                       >
-                        {course}
+                        {highlightMatchedText(course, highlightQuery)}
                       </span>
                     ))}
                     {university.courses.length > 6 && !isExpanded && (

@@ -412,6 +412,7 @@ const UniversityList: React.FC = () => {
               onToggleFavorite={toggleFavorite}
               onViewDetails={handleViewDetails}
               viewMode={viewMode}
+              highlightQuery={filters.searchQuery}
             />
           ))}
         </div>
