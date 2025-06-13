@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Menu, X, Globe, User, FileText, Bell } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Menu, X, Globe, User, LogOut, Upload, Camera } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from './ThemeToggle';
 import Button from './ui/Button';
@@ -7,9 +7,52 @@ import Button from './ui/Button';
 const Navbar: React.FC = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const toggleProfileMenu = () => {
+    setShowProfileMenu(!showProfileMenu);
+  };
+
+  const handleProfileImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const imageUrl = e.target?.result as string;
+        setProfileImage(imageUrl);
+        // In a real app, you would upload this to your storage service
+        localStorage.setItem('profileImage', imageUrl);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const triggerImageUpload = () => {
+    fileInputRef.current?.click();
+    setShowProfileMenu(false);
+  };
+
+  // Load profile image from localStorage on component mount
+  React.useEffect(() => {
+    const savedImage = localStorage.getItem('profileImage');
+    if (savedImage) {
+      setProfileImage(savedImage);
+    }
+  }, []);
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   };
 
   return (
@@ -48,6 +91,12 @@ const Navbar: React.FC = () => {
                 >
                   Dashboard
                 </a>
+                <a 
+                  href="/profile" 
+                  className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 text-sm font-medium transition-colors"
+                >
+                  Profile
+                </a>
               </>
             )}
           </div>
@@ -58,52 +107,60 @@ const Navbar: React.FC = () => {
             
             {isAuthenticated ? (
               <div className="flex items-center space-x-3">
-                <button className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative">
-                  <Bell size={20} />
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                </button>
-                
-                <div className="flex items-center space-x-3">
-                  <div className="hidden lg:block text-right">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">
-                      {user?.name}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Student
-                    </p>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <a href="/dashboard">
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        leftIcon={<FileText size={16} />}
-                        className="hidden lg:flex"
-                        onClick={() => window.location.href = '/dashboard'}
+                {/* Profile Avatar with Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={toggleProfileMenu}
+                    className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+                  >
+                    {profileImage ? (
+                      <img
+                        src={profileImage}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center">
+                        <span className="text-white text-sm font-semibold">
+                          {user?.name ? getInitials(user.name) : 'U'}
+                        </span>
+                      </div>
+                    )}
+                  </button>
+
+                  {/* Profile Dropdown Menu */}
+                  {showProfileMenu && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50 border border-gray-200 dark:border-gray-700">
+                      <button
+                        onClick={triggerImageUpload}
+                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                       >
-                        Documents
-                      </Button>
-                    </a>
-                    <a href="/dashboard">
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        leftIcon={<User size={16} />}
-                        className="hidden lg:flex"
+                        <Camera size={16} className="mr-3" />
+                        Upload Profile Image
+                      </button>
+                      <hr className="border-gray-200 dark:border-gray-700 my-1" />
+                      <button
+                        onClick={() => {
+                          logout();
+                          setShowProfileMenu(false);
+                        }}
+                        className="flex items-center w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                       >
-                        Profile
-                      </Button>
-                    </a>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={logout}
-                    >
-                      Sign out
-                    </Button>
-                  </div>
+                        <LogOut size={16} className="mr-3" />
+                        Sign Out
+                      </button>
+                    </div>
+                  )}
                 </div>
+
+                {/* Hidden file input for image upload */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleProfileImageUpload}
+                  className="hidden"
+                />
               </div>
             ) : (
               <div className="flex items-center space-x-3">
@@ -158,6 +215,12 @@ const Navbar: React.FC = () => {
                 >
                   Dashboard
                 </a>
+                <a 
+                  href="/profile" 
+                  className="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md transition-colors"
+                >
+                  Profile
+                </a>
               </>
             )}
           </div>
@@ -167,50 +230,53 @@ const Navbar: React.FC = () => {
             {isAuthenticated ? (
               <div className="px-4 space-y-3">
                 <div className="flex items-center">
-                  <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
-                    <User className="w-5 h-5 text-white" />
+                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-600">
+                    {profileImage ? (
+                      <img
+                        src={profileImage}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center">
+                        <span className="text-white text-sm font-semibold">
+                          {user?.name ? getInitials(user.name) : 'U'}
+                        </span>
+                      </div>
+                    )}
                   </div>
                   <div className="ml-3">
                     <div className="text-base font-medium text-gray-800 dark:text-gray-200">
-                      {user?.name}
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
                       {user?.email}
                     </div>
                   </div>
-                  <button className="ml-auto p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 relative">
-                    <Bell size={20} />
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                  </button>
                 </div>
                 
                 <div className="space-y-2">
-                  <a href="/dashboard" className="block">
-                    <Button 
-                      variant="ghost" 
-                      className="w-full justify-start"
-                      leftIcon={<FileText size={16} />}
-                    >
-                      Documents
-                    </Button>
-                  </a>
-                  <a href="/dashboard" className="block">
-                    <Button 
-                      variant="ghost" 
-                      className="w-full justify-start"
-                      leftIcon={<User size={16} />}
-                    >
-                      Profile
-                    </Button>
-                  </a>
-                  <Button 
-                    variant="outline" 
-                    className="w-full"
-                    onClick={logout}
+                  <button
+                    onClick={triggerImageUpload}
+                    className="flex items-center w-full px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md transition-colors"
                   >
-                    Sign out
-                  </Button>
+                    <Camera size={16} className="mr-3" />
+                    Upload Profile Image
+                  </button>
+                  <button
+                    onClick={logout}
+                    className="flex items-center w-full px-3 py-2 text-base font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
+                  >
+                    <LogOut size={16} className="mr-3" />
+                    Sign Out
+                  </button>
                 </div>
+
+                {/* Hidden file input for mobile */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleProfileImageUpload}
+                  className="hidden"
+                />
               </div>
             ) : (
               <div className="px-4 space-y-2">
@@ -228,6 +294,14 @@ const Navbar: React.FC = () => {
             )}
           </div>
         </div>
+      )}
+
+      {/* Click outside to close profile menu */}
+      {showProfileMenu && (
+        <div
+          className="fixed inset-0 z-40"
+          onClick={() => setShowProfileMenu(false)}
+        />
       )}
     </nav>
   );
