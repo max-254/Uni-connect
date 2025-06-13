@@ -31,21 +31,10 @@ import ProfileInsights from '../components/profile/ProfileInsights';
 import UniversityRecommendations from '../components/matching/UniversityRecommendations';
 import FavoritesManager from '../components/applications/FavoritesManager';
 import ApplicationTracker from '../components/applications/ApplicationTracker';
+import DocumentManager from '../components/dashboard/DocumentManager';
 import { useAuth } from '../context/AuthContext';
 import { documentParsingService } from '../services/documentParsingService';
 import { applicationService } from '../services/applicationService';
-
-interface Document {
-  id: string;
-  name: string;
-  type: 'transcript' | 'cv' | 'statement' | 'recommendation' | 'certificate' | 'other';
-  status: 'pending' | 'uploaded' | 'verified' | 'rejected';
-  uploadDate: Date;
-  size: number;
-  url?: string;
-  parsedData?: any;
-  confidenceScore?: number;
-}
 
 interface ProfileCompletion {
   personalInfo: boolean;
@@ -58,38 +47,6 @@ interface ProfileCompletion {
 const DashboardPage: React.FC = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'overview' | 'documents' | 'applications' | 'profile' | 'insights' | 'recommendations' | 'favorites'>('overview');
-  const [documents, setDocuments] = useState<Document[]>([
-    {
-      id: '1',
-      name: 'Academic_Transcript_2024.pdf',
-      type: 'transcript',
-      status: 'verified',
-      uploadDate: new Date('2024-01-15'),
-      size: 2048000,
-      url: '#',
-      confidenceScore: 95
-    },
-    {
-      id: '2',
-      name: 'CV_John_Doe.pdf',
-      type: 'cv',
-      status: 'verified',
-      uploadDate: new Date('2024-01-20'),
-      size: 1024000,
-      url: '#',
-      confidenceScore: 88
-    },
-    {
-      id: '3',
-      name: 'Personal_Statement.pdf',
-      type: 'statement',
-      status: 'verified',
-      uploadDate: new Date('2024-01-22'),
-      size: 512000,
-      url: '#',
-      confidenceScore: 92
-    }
-  ]);
 
   const [profileCompletion, setProfileCompletion] = useState<ProfileCompletion>({
     personalInfo: true,
@@ -156,27 +113,6 @@ const DashboardPage: React.FC = () => {
     }
   };
 
-  const getStatusIcon = (status: Document['status']) => {
-    switch (status) {
-      case 'verified':
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case 'uploaded':
-        return <Clock className="h-4 w-4 text-blue-500" />;
-      case 'rejected':
-        return <AlertCircle className="h-4 w-4 text-red-500" />;
-      default:
-        return <Upload className="h-4 w-4 text-gray-400" />;
-    }
-  };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
-
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
@@ -184,22 +120,6 @@ const DashboardPage: React.FC = () => {
       day: 'numeric'
     });
   };
-
-  const getAIInsightsSummary = () => {
-    const verifiedDocs = documents.filter(doc => doc.status === 'verified').length;
-    const avgConfidence = documents
-      .filter(doc => doc.confidenceScore)
-      .reduce((sum, doc) => sum + (doc.confidenceScore || 0), 0) / 
-      documents.filter(doc => doc.confidenceScore).length || 0;
-
-    return {
-      documentsAnalyzed: verifiedDocs,
-      averageConfidence: Math.round(avgConfidence),
-      profileStrength: profileCompletion.overall
-    };
-  };
-
-  const aiSummary = getAIInsightsSummary();
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -238,36 +158,6 @@ const DashboardPage: React.FC = () => {
               </div>
             </div>
           </div>
-
-          {/* AI Insights Banner */}
-          <Card className="mb-8 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-purple-200 dark:border-purple-800">
-            <CardBody className="p-6">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
-                    <Brain className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-purple-900 dark:text-purple-300">
-                      AI Profile Analysis Complete
-                    </h3>
-                    <p className="text-purple-700 dark:text-purple-400">
-                      {aiSummary.documentsAnalyzed} documents analyzed • {aiSummary.averageConfidence}% avg confidence • {aiSummary.profileStrength}% profile strength
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-4 sm:mt-0 flex items-center space-x-3">
-                  <Button
-                    onClick={() => setActiveTab('insights')}
-                    leftIcon={<Zap size={16} />}
-                    className="bg-purple-600 hover:bg-purple-700"
-                  >
-                    View Insights
-                  </Button>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
 
           {/* Profile Completion Banner */}
           <Card className="mb-8 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20 border-blue-200 dark:border-blue-800">
@@ -572,7 +462,7 @@ const DashboardPage: React.FC = () => {
                     <Button
                       variant="outline"
                       className="w-full"
-                      onClick={() => window.location.href = '/profile/documents'}
+                      onClick={() => setActiveTab('documents')}
                     >
                       Manage Documents
                     </Button>
@@ -599,176 +489,7 @@ const DashboardPage: React.FC = () => {
           )}
 
           {activeTab === 'documents' && (
-            <div className="space-y-6">
-              {/* Document Upload Section */}
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Document Management</h3>
-                    <Button
-                      leftIcon={<Plus size={16} />}
-                      onClick={() => window.location.href = '/profile/documents'}
-                    >
-                      Upload Documents
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardBody>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {[
-                      { type: 'transcript', label: 'Academic Transcripts', required: true },
-                      { type: 'cv', label: 'CV/Resume', required: true },
-                      { type: 'statement', label: 'Personal Statement', required: true },
-                      { type: 'recommendation', label: 'Recommendation Letters', required: false },
-                      { type: 'certificate', label: 'Certificates', required: false },
-                      { type: 'other', label: 'Other Documents', required: false }
-                    ].map((docType) => {
-                      const typeDocuments = documents.filter(doc => doc.type === docType.type);
-                      const hasVerified = typeDocuments.some(doc => doc.status === 'verified');
-                      
-                      return (
-                        <div key={docType.type} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                          <div className="flex items-center justify-between mb-3">
-                            <h4 className="font-medium text-gray-900 dark:text-white">{docType.label}</h4>
-                            {docType.required && (
-                              <span className="text-xs text-red-600 dark:text-red-400">Required</span>
-                            )}
-                          </div>
-                          
-                          <div className="space-y-2">
-                            {typeDocuments.length > 0 ? (
-                              typeDocuments.map((doc) => (
-                                <div key={doc.id} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded">
-                                  <div className="flex items-center space-x-2">
-                                    {getStatusIcon(doc.status)}
-                                    <span className="text-sm text-gray-700 dark:text-gray-300 truncate">
-                                      {doc.name}
-                                    </span>
-                                    {doc.confidenceScore && (
-                                      <span className="text-xs text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/20 px-2 py-1 rounded">
-                                        {doc.confidenceScore}%
-                                      </span>
-                                    )}
-                                  </div>
-                                  <div className="flex items-center space-x-1">
-                                    <Button variant="ghost" size="sm" leftIcon={<Eye size={12} />}>
-                                      View
-                                    </Button>
-                                  </div>
-                                </div>
-                              ))
-                            ) : (
-                              <div className="text-center py-4">
-                                <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                                <p className="text-sm text-gray-500 dark:text-gray-400">No documents uploaded</p>
-                              </div>
-                            )}
-                          </div>
-                          
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full mt-3"
-                            leftIcon={<Upload size={14} />}
-                          >
-                            Upload {docType.label}
-                          </Button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </CardBody>
-              </Card>
-
-              {/* Recent Documents */}
-              <Card>
-                <CardHeader>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Documents</h3>
-                </CardHeader>
-                <CardBody className="p-0">
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                      <thead className="bg-gray-50 dark:bg-gray-800">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Document
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Type
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Status
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            AI Confidence
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Upload Date
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
-                        {documents.map((document) => (
-                          <tr key={document.id}>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="flex items-center">
-                                <FileText className="w-5 h-5 text-gray-400 mr-3" />
-                                <div>
-                                  <div className="text-sm font-medium text-gray-900 dark:text-white">
-                                    {document.name}
-                                  </div>
-                                </div>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
-                                {document.type}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="flex items-center">
-                                {getStatusIcon(document.status)}
-                                <span className="ml-2 text-sm text-gray-900 dark:text-white capitalize">
-                                  {document.status}
-                                </span>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              {document.confidenceScore ? (
-                                <div className="flex items-center">
-                                  <Brain className="w-4 h-4 text-purple-500 mr-1" />
-                                  <span className="text-sm font-medium text-purple-600 dark:text-purple-400">
-                                    {document.confidenceScore}%
-                                  </span>
-                                </div>
-                              ) : (
-                                <span className="text-sm text-gray-500 dark:text-gray-400">-</span>
-                              )}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                              {formatDate(document.uploadDate)}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                              <div className="flex items-center space-x-2">
-                                <Button variant="ghost" size="sm" leftIcon={<Eye size={14} />}>
-                                  View
-                                </Button>
-                                <Button variant="ghost" size="sm" leftIcon={<Download size={14} />}>
-                                  Download
-                                </Button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </CardBody>
-              </Card>
-            </div>
+            <DocumentManager />
           )}
 
           {activeTab === 'profile' && (
@@ -795,7 +516,11 @@ const DashboardPage: React.FC = () => {
                           )}
                           <span className="font-medium text-gray-900 dark:text-white">{section.label}</span>
                         </div>
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => section.key === 'documents' ? setActiveTab('documents') : null}
+                        >
                           {section.completed ? 'Edit' : 'Complete'}
                         </Button>
                       </div>
@@ -817,7 +542,11 @@ const DashboardPage: React.FC = () => {
                     <p className="text-gray-600 dark:text-gray-400 mb-4">
                       Upload your academic transcripts, CV, and other required documents for AI analysis.
                     </p>
-                    <Button className="w-full" leftIcon={<Upload size={16} />}>
+                    <Button 
+                      className="w-full" 
+                      leftIcon={<Upload size={16} />}
+                      onClick={() => setActiveTab('documents')}
+                    >
                       Go to Documents
                     </Button>
                   </CardBody>
@@ -834,7 +563,12 @@ const DashboardPage: React.FC = () => {
                     <p className="text-gray-600 dark:text-gray-400 mb-4">
                       Browse and discover universities that match your AI-analyzed profile and preferences.
                     </p>
-                    <Button variant="outline" className="w-full" leftIcon={<GraduationCap size={16} />}>
+                    <Button 
+                      variant="outline" 
+                      className="w-full" 
+                      leftIcon={<GraduationCap size={16} />}
+                      onClick={() => window.location.href = '/universities'}
+                    >
                       Browse Universities
                     </Button>
                   </CardBody>

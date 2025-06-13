@@ -49,12 +49,6 @@ const Navbar: React.FC = () => {
                 >
                   Dashboard
                 </a>
-                <a 
-                  href="/profile/documents" 
-                  className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 text-sm font-medium transition-colors"
-                >
-                  Documents
-                </a>
               </>
             )}
           </div>
@@ -86,12 +80,13 @@ const Navbar: React.FC = () => {
                   </div>
                   
                   <div className="flex items-center space-x-2">
-                    <a href="/profile/documents">
+                    <a href="/dashboard">
                       <Button 
                         variant="ghost" 
                         size="sm"
                         leftIcon={<FileText size={16} />}
                         className="hidden lg:flex"
+                        onClick={() => window.location.href = '/dashboard'}
                       >
                         Documents
                       </Button>
@@ -174,12 +169,6 @@ const Navbar: React.FC = () => {
                 >
                   Dashboard
                 </a>
-                <a 
-                  href="/profile/documents" 
-                  className="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md transition-colors"
-                >
-                  Documents
-                </a>
               </>
             )}
           </div>
@@ -207,7 +196,7 @@ const Navbar: React.FC = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <a href="/profile/documents" className="block">
+                  <a href="/dashboard" className="block">
                     <Button 
                       variant="ghost" 
                       className="w-full justify-start"

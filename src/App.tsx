@@ -4,7 +4,6 @@ import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import HomePage from './pages/HomePage';
 import UniversitiesPage from './pages/UniversitiesPage';
-import ProfileDocumentationPage from './pages/ProfileDocumentationPage';
 import DashboardPage from './pages/DashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import SignupPage from './pages/SignupPage';
@@ -18,7 +17,6 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/universities" element={<UniversitiesPage />} />
-            <Route path="/profile/documents" element={<ProfileDocumentationPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/admin" element={<AdminDashboardPage />} />
             <Route path="/signup" element={<SignupPage />} />
