@@ -18,13 +18,15 @@ import {
   Plus,
   BarChart3,
   Brain,
-  Zap
+  Zap,
+  Target
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Card, CardHeader, CardBody } from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import ProfileInsights from '../components/profile/ProfileInsights';
+import UniversityRecommendations from '../components/matching/UniversityRecommendations';
 import { useAuth } from '../context/AuthContext';
 import { documentParsingService } from '../services/documentParsingService';
 
@@ -60,7 +62,7 @@ interface ProfileCompletion {
 
 const DashboardPage: React.FC = () => {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<'overview' | 'documents' | 'applications' | 'profile' | 'insights'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'documents' | 'applications' | 'profile' | 'insights' | 'recommendations'>('overview');
   const [documents, setDocuments] = useState<Document[]>([
     {
       id: '1',
@@ -334,6 +336,7 @@ const DashboardPage: React.FC = () => {
               <nav className="-mb-px flex space-x-8 overflow-x-auto">
                 {[
                   { id: 'overview', label: 'Overview', icon: BarChart3 },
+                  { id: 'recommendations', label: 'AI Matches', icon: Target },
                   { id: 'insights', label: 'AI Insights', icon: Brain },
                   { id: 'documents', label: 'Documents', icon: FileText },
                   { id: 'applications', label: 'Applications', icon: GraduationCap },
@@ -409,6 +412,7 @@ const DashboardPage: React.FC = () => {
                   <CardBody className="p-6">
                     <div className="flex items-center">
                       <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-lg flex items-center justify-center">
+                
                         <TrendingUp className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
                       </div>
                       <div className="ml-4">
@@ -507,6 +511,10 @@ const DashboardPage: React.FC = () => {
                 </Card>
               </div>
             </div>
+          )}
+
+          {activeTab === 'recommendations' && (
+            <UniversityRecommendations />
           )}
 
           {activeTab === 'insights' && (
