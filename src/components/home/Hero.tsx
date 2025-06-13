@@ -71,7 +71,7 @@ const Hero: React.FC = () => {
               </div>
 
               {/* Main Heading */}
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-white leading-tight mb-6">
                 Find Your Perfect
                 <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-purple-200">
                   University Match
@@ -80,7 +80,7 @@ const Hero: React.FC = () => {
               </h1>
 
               {/* Subtitle */}
-              <p className="text-lg sm:text-xl text-blue-100 mb-8 max-w-2xl mx-auto lg:mx-0">
+              <p className="text-base sm:text-lg lg:text-xl text-blue-100 mb-8 max-w-2xl mx-auto lg:mx-0">
                 Explore thousands of universities worldwide. Get matched with institutions that fit your qualifications, 
                 and receive guidance throughout your application journey.
               </p>
@@ -89,14 +89,14 @@ const Hero: React.FC = () => {
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
                 <Button
                   onClick={() => navigate('/universities')}
-                  className="bg-white text-blue-700 hover:bg-blue-50 px-8 py-4 text-lg font-semibold"
+                  className="bg-white text-blue-700 hover:bg-blue-50 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold"
                   rightIcon={<ArrowRight size={20} />}
                 >
                   Explore Universities
                 </Button>
                 <Button
                   variant="outline"
-                  className="border-white text-white hover:bg-white hover:text-blue-700 px-8 py-4 text-lg font-semibold"
+                  className="border-white text-white hover:bg-white hover:text-blue-700 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold"
                   onClick={() => navigate('/about')}
                 >
                   Learn More
@@ -104,7 +104,7 @@ const Hero: React.FC = () => {
               </div>
 
               {/* Trust Indicators */}
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6 text-blue-100">
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 sm:gap-6 text-blue-100">
                 <div className="flex items-center">
                   <div className="flex -space-x-2">
                     {[1, 2, 3, 4, 5].map((i) => (
@@ -116,7 +116,7 @@ const Hero: React.FC = () => {
                       </div>
                     ))}
                   </div>
-                  <span className="ml-3 font-medium">15,000+ Students</span>
+                  <span className="ml-3 font-medium text-sm sm:text-base">15,000+ Students</span>
                 </div>
                 <div className="hidden sm:block w-px h-6 bg-blue-300"></div>
                 <div className="flex items-center">
@@ -125,12 +125,12 @@ const Hero: React.FC = () => {
                       <Star key={i} size={16} fill="currentColor" />
                     ))}
                   </div>
-                  <span className="ml-2 font-medium">4.9/5 Rating</span>
+                  <span className="ml-2 font-medium text-sm sm:text-base">4.9/5 Rating</span>
                 </div>
                 <div className="hidden sm:block w-px h-6 bg-blue-300"></div>
                 <div className="flex items-center">
                   <MapPin size={16} className="mr-2" />
-                  <span className="font-medium">50+ Countries</span>
+                  <span className="font-medium text-sm sm:text-base">50+ Countries</span>
                 </div>
               </div>
             </div>
@@ -142,10 +142,10 @@ const Hero: React.FC = () => {
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-xl mb-4">
                     <Search className="w-6 h-6 text-blue-600" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
                     Quick University Search
                   </h3>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 text-sm sm:text-base">
                     Find programs matching your preferences
                   </p>
                 </div>
@@ -160,7 +160,7 @@ const Hero: React.FC = () => {
                       name="studyLevel"
                       value={formData.studyLevel}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm sm:text-base"
                     >
                       <option value="">Select Study Level</option>
                       {studyLevels.map(level => (
@@ -178,7 +178,7 @@ const Hero: React.FC = () => {
                       name="fieldOfStudy"
                       value={formData.fieldOfStudy}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm sm:text-base"
                     >
                       <option value="">Select Field of Study</option>
                       {courses.slice(0, 20).map(course => (
@@ -196,7 +196,7 @@ const Hero: React.FC = () => {
                       name="country"
                       value={formData.country}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm sm:text-base"
                     >
                       <option value="">Select Destination Country</option>
                       <option value="United States">🇺🇸 United States</option>
@@ -214,7 +214,7 @@ const Hero: React.FC = () => {
                   {/* Submit Button */}
                   <Button 
                     type="submit"
-                    className="w-full py-4 text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                    className="w-full py-3 sm:py-4 text-base sm:text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                     rightIcon={<ArrowRight size={20} />}
                   >
                     Find Universities

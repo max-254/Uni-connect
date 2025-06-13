@@ -142,7 +142,7 @@ const UniversityFilters: React.FC<UniversityFiltersProps> = ({
     <>
       {/* Desktop Filters */}
       <Card className="hidden lg:block mb-6">
-        <CardBody className="p-6">
+        <CardBody className="p-4 sm:p-6">
           {/* Main Search and Quick Filters */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-4">
             {/* Search */}
@@ -162,7 +162,7 @@ const UniversityFilters: React.FC<UniversityFiltersProps> = ({
               <select
                 value={filters.countries[0] || ''}
                 onChange={(e) => updateFilter('countries', e.target.value ? [e.target.value] : [])}
-                className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
               >
                 <option value="">All Countries</option>
                 {availableCountries.slice(0, 20).map(country => (
@@ -176,7 +176,7 @@ const UniversityFilters: React.FC<UniversityFiltersProps> = ({
               <select
                 value={filters.studyLevels[0] || ''}
                 onChange={(e) => updateFilter('studyLevels', e.target.value ? [e.target.value] : [])}
-                className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
               >
                 <option value="">All Study Levels</option>
                 {availableStudyLevels.map(level => (
@@ -190,7 +190,7 @@ const UniversityFilters: React.FC<UniversityFiltersProps> = ({
               <select
                 value={filters.courses[0] || ''}
                 onChange={(e) => updateFilter('courses', e.target.value ? [e.target.value] : [])}
-                className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
               >
                 <option value="">All Fields</option>
                 {availableCourses.slice(0, 30).map(course => (
@@ -204,7 +204,7 @@ const UniversityFilters: React.FC<UniversityFiltersProps> = ({
               <select
                 value={filters.sortBy}
                 onChange={(e) => updateFilter('sortBy', e.target.value)}
-                className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
               >
                 {sortOptions.map(option => (
                   <option key={option.value} value={option.value}>{option.label}</option>
@@ -214,8 +214,8 @@ const UniversityFilters: React.FC<UniversityFiltersProps> = ({
           </div>
 
           {/* Advanced Filters Toggle */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center gap-4">
               <button
                 onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
                 className="flex items-center text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
@@ -268,7 +268,7 @@ const UniversityFilters: React.FC<UniversityFiltersProps> = ({
                   <select
                     value={filters.tuitionRange}
                     onChange={(e) => updateFilter('tuitionRange', e.target.value)}
-                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
                   >
                     {tuitionRanges.map(range => (
                       <option key={range.value} value={range.value}>{range.label}</option>
@@ -285,7 +285,7 @@ const UniversityFilters: React.FC<UniversityFiltersProps> = ({
                   <select
                     value={filters.acceptanceRate}
                     onChange={(e) => updateFilter('acceptanceRate', e.target.value)}
-                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
                   >
                     {acceptanceRateRanges.map(range => (
                       <option key={range.value} value={range.value}>{range.label}</option>
@@ -302,7 +302,7 @@ const UniversityFilters: React.FC<UniversityFiltersProps> = ({
                   <select
                     value={filters.applicationDeadline}
                     onChange={(e) => updateFilter('applicationDeadline', e.target.value)}
-                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
                   >
                     {deadlineOptions.map(option => (
                       <option key={option.value} value={option.value}>{option.label}</option>
@@ -377,12 +377,12 @@ const UniversityFilters: React.FC<UniversityFiltersProps> = ({
         </div>
 
         {/* Mobile Filter Toggle */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <Button
             variant="outline"
             onClick={() => setShowMobileFilters(!showMobileFilters)}
             leftIcon={<Filter size={16} />}
-            className="flex-1 mr-2"
+            className="flex-1"
           >
             Filters
             {activeFilterCount > 0 && (
@@ -395,7 +395,7 @@ const UniversityFilters: React.FC<UniversityFiltersProps> = ({
           <select
             value={filters.sortBy}
             onChange={(e) => updateFilter('sortBy', e.target.value)}
-            className="px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            className="px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm min-w-0 flex-shrink-0"
           >
             {sortOptions.map(option => (
               <option key={option.value} value={option.value}>{option.label}</option>
@@ -435,7 +435,7 @@ const UniversityFilters: React.FC<UniversityFiltersProps> = ({
                 <select
                   value={filters.countries[0] || ''}
                   onChange={(e) => updateFilter('countries', e.target.value ? [e.target.value] : [])}
-                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md"
+                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-sm"
                 >
                   <option value="">All Countries</option>
                   {availableCountries.slice(0, 20).map(country => (
@@ -452,7 +452,7 @@ const UniversityFilters: React.FC<UniversityFiltersProps> = ({
                 <select
                   value={filters.studyLevels[0] || ''}
                   onChange={(e) => updateFilter('studyLevels', e.target.value ? [e.target.value] : [])}
-                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md"
+                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-sm"
                 >
                   <option value="">All Study Levels</option>
                   {availableStudyLevels.map(level => (
@@ -469,7 +469,7 @@ const UniversityFilters: React.FC<UniversityFiltersProps> = ({
                 <select
                   value={filters.courses[0] || ''}
                   onChange={(e) => updateFilter('courses', e.target.value ? [e.target.value] : [])}
-                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md"
+                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-sm"
                 >
                   <option value="">All Fields</option>
                   {availableCourses.slice(0, 30).map(course => (
@@ -486,7 +486,7 @@ const UniversityFilters: React.FC<UniversityFiltersProps> = ({
                 <select
                   value={filters.tuitionRange}
                   onChange={(e) => updateFilter('tuitionRange', e.target.value)}
-                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md"
+                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-sm"
                 >
                   {tuitionRanges.map(range => (
                     <option key={range.value} value={range.value}>{range.label}</option>
@@ -502,7 +502,7 @@ const UniversityFilters: React.FC<UniversityFiltersProps> = ({
                 <select
                   value={filters.acceptanceRate}
                   onChange={(e) => updateFilter('acceptanceRate', e.target.value)}
-                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md"
+                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-sm"
                 >
                   {acceptanceRateRanges.map(range => (
                     <option key={range.value} value={range.value}>{range.label}</option>
