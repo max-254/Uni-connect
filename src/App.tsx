@@ -8,6 +8,10 @@ import DashboardPage from './pages/DashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import SignupPage from './pages/SignupPage';
 import LoginPage from './pages/LoginPage';
+import CoursesPage from './pages/CoursesPage';
+import CourseApplicationPage from './pages/CourseApplicationPage';
+import ApplicationSuccessPage from './pages/ApplicationSuccessPage';
+import ApplicationDashboardPage from './pages/ApplicationDashboardPage';
 
 function App() {
   return (
@@ -21,7 +25,10 @@ function App() {
             <Route path="/admin" element={<AdminDashboardPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />} />
-            {/* Add more routes as needed */}
+            <Route path="/courses" element={<CoursesPage />} />
+            <Route path="/courses/:courseId/apply" element={<CourseApplicationPage />} />
+            <Route path="/courses/application-success/:applicationId" element={<ApplicationSuccessPage />} />
+            <Route path="/dashboard/applications" element={<ApplicationDashboardPage />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>
