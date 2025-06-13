@@ -3,7 +3,7 @@ import { User } from '../types';
 
 // Mock user data for demo purposes
 const MOCK_USER: User = {
-  id: '1',
+  id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
   email: 'student@example.com',
   name: 'John Doe',
   role: 'student',
