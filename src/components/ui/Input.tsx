@@ -31,6 +31,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             }
             transition-colors focus:outline-none focus:ring-2 focus:ring-offset-0
             disabled:opacity-50 disabled:cursor-not-allowed
+            dark:text-white dark:placeholder-gray-400
             ${className}
           `}
           aria-invalid={error ? 'true' : 'false'}

@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { Menu, X, Globe, Moon, Sun, User, FileText, Bell } from 'lucide-react';
+import { Menu, X, Globe, User, FileText, Bell } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
+import ThemeToggle from './ThemeToggle';
 import Button from './ui/Button';
 
 const Navbar: React.FC = () => {
   const { isAuthenticated, user, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -55,12 +54,7 @@ const Navbar: React.FC = () => {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            >
-              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
+            <ThemeToggle />
             
             {isAuthenticated ? (
               <div className="flex items-center space-x-3">
@@ -129,12 +123,7 @@ const Navbar: React.FC = () => {
           
           {/* Mobile menu button */}
           <div className="flex items-center md:hidden space-x-2">
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
-            >
-              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
+            <ThemeToggle size="sm" />
             <button
               onClick={toggleMenu}
               className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
