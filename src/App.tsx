@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage';
 import UniversitiesPage from './pages/UniversitiesPage';
 import ProfileDocumentationPage from './pages/ProfileDocumentationPage';
 import DashboardPage from './pages/DashboardPage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
 import SignupPage from './pages/SignupPage';
 import LoginPage from './pages/LoginPage';
 
@@ -19,6 +20,7 @@ function App() {
             <Route path="/universities" element={<UniversitiesPage />} />
             <Route path="/profile/documents" element={<ProfileDocumentationPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/admin" element={<AdminDashboardPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />} />
             {/* Add more routes as needed */}
