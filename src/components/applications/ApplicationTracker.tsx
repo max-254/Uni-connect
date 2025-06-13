@@ -15,11 +15,14 @@ import {
   TrendingUp,
   Target,
   Award,
-  Users
+  Users,
+  Shield,
+  Plane
 } from 'lucide-react';
 import { Card, CardHeader, CardBody } from '../ui/Card';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
+import VisaGuidanceModal from '../visa/VisaGuidanceModal';
 import { applicationService, Application } from '../../services/applicationService';
 import { useAuth } from '../../context/AuthContext';
 
@@ -30,6 +33,11 @@ const ApplicationTracker: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<Application['status'] | ''>('');
   const [stats, setStats] = useState<any>(null);
+  const [showVisaModal, setShowVisaModal] = useState(false);
+  const [selectedUniversity, setSelectedUniversity] = useState<{
+    country: string;
+    name: string;
+  } | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -42,7 +50,14 @@ const ApplicationTracker: React.FC = () => {
     try {
       setLoading(true);
       const apps = await applicationService.getApplications(user!.id);
-      setApplications(apps);
+      
+      // Add mock university_country for accepted applications
+      const appsWithCountry = apps.map(app => ({
+        ...app,
+        university_country: getUniversityCountry(app.university_name)
+      }));
+      
+      setApplications(appsWithCountry);
     } catch (error) {
       console.error('Error loading applications:', error);
     } finally {
@@ -59,6 +74,61 @@ const ApplicationTracker: React.FC = () => {
     }
   };
 
+  // Helper function to determine university country based on name
+  const getUniversityCountry = (universityName: string): string => {
+    const countryMap: Record<string, string> = {
+      'Harvard University': 'United States',
+      'Stanford University': 'United States',
+      'MIT': 'United States',
+      'University of Oxford': 'United Kingdom',
+      'University of Cambridge': 'United Kingdom',
+      'University of Toronto': 'Canada',
+      'University of Melbourne': 'Australia',
+      'Technical University of Munich': 'Germany',
+      'Sorbonne University': 'France',
+      'University of Amsterdam': 'Netherlands'
+    };
+
+    // Check for exact matches first
+    if (countryMap[universityName]) {
+      return countryMap[universityName];
+    }
+
+    // Check for partial matches
+    const name = universityName.toLowerCase();
+    if (name.includes('harvard') || name.includes('stanford') || name.includes('mit') || 
+        name.includes('berkeley') || name.includes('yale') || name.includes('princeton')) {
+      return 'United States';
+    }
+    if (name.includes('oxford') || name.includes('cambridge') || name.includes('london') || 
+        name.includes('edinburgh') || name.includes('manchester')) {
+      return 'United Kingdom';
+    }
+    if (name.includes('toronto') || name.includes('mcgill') || name.includes('waterloo') || 
+        name.includes('british columbia')) {
+      return 'Canada';
+    }
+    if (name.includes('melbourne') || name.includes('sydney') || name.includes('queensland') || 
+        name.includes('monash') || name.includes('australian')) {
+      return 'Australia';
+    }
+    if (name.includes('munich') || name.includes('berlin') || name.includes('heidelberg') || 
+        name.includes('technical university') || name.includes('humboldt')) {
+      return 'Germany';
+    }
+    if (name.includes('sorbonne') || name.includes('paris') || name.includes('lyon') || 
+        name.includes('toulouse') || name.includes('grenoble')) {
+      return 'France';
+    }
+    if (name.includes('amsterdam') || name.includes('delft') || name.includes('utrecht') || 
+        name.includes('leiden') || name.includes('rotterdam')) {
+      return 'Netherlands';
+    }
+
+    // Default fallback
+    return 'United States';
+  };
+
   const handleDeleteApplication = async (applicationId: string) => {
     if (window.confirm('Are you sure you want to delete this application?')) {
       try {
@@ -69,6 +139,14 @@ const ApplicationTracker: React.FC = () => {
         console.error('Error deleting application:', error);
       }
     }
+  };
+
+  const handleViewVisaGuidance = (application: any) => {
+    setSelectedUniversity({
+      country: application.university_country,
+      name: application.university_name
+    });
+    setShowVisaModal(true);
   };
 
   const getStatusIcon = (status: Application['status']) => {
@@ -178,24 +256,24 @@ const ApplicationTracker: React.FC = () => {
 
           <Card>
             <CardBody className="p-6 text-center">
-              <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Clock className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">In Progress</h3>
-              <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
-                {(stats.byStatus.draft || 0) + (stats.byStatus['in-progress'] || 0)}
-              </p>
-            </CardBody>
-          </Card>
-
-          <Card>
-            <CardBody className="p-6 text-center">
               <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Award className="w-6 h-6 text-purple-600 dark:text-purple-400" />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Accepted</h3>
               <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">
                 {stats.byStatus.accepted || 0}
+              </p>
+            </CardBody>
+          </Card>
+
+          <Card>
+            <CardBody className="p-6 text-center">
+              <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Clock className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">In Progress</h3>
+              <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
+                {(stats.byStatus.draft || 0) + (stats.byStatus['in-progress'] || 0)}
               </p>
             </CardBody>
           </Card>
@@ -332,6 +410,35 @@ const ApplicationTracker: React.FC = () => {
                           </p>
                         </div>
                       )}
+
+                      {/* Visa Guidance for Accepted Applications */}
+                      {application.status === 'accepted' && (
+                        <div className="mt-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                                <Shield className="w-5 h-5 text-green-600 dark:text-green-400" />
+                              </div>
+                              <div>
+                                <h4 className="font-semibold text-green-800 dark:text-green-300">
+                                  🎉 Congratulations! Application Accepted
+                                </h4>
+                                <p className="text-sm text-green-700 dark:text-green-200">
+                                  Next step: Prepare your student visa for {(application as any).university_country}
+                                </p>
+                              </div>
+                            </div>
+                            <Button
+                              size="sm"
+                              onClick={() => handleViewVisaGuidance(application)}
+                              leftIcon={<Plane size={14} />}
+                              className="bg-green-600 hover:bg-green-700 text-white"
+                            >
+                              Visa Guidance
+                            </Button>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Actions */}
@@ -446,6 +553,14 @@ const ApplicationTracker: React.FC = () => {
           </CardBody>
         </Card>
       )}
+
+      {/* Visa Guidance Modal */}
+      <VisaGuidanceModal
+        isOpen={showVisaModal}
+        onClose={() => setShowVisaModal(false)}
+        universityCountry={selectedUniversity?.country || ''}
+        universityName={selectedUniversity?.name || ''}
+      />
     </div>
   );
 };
