@@ -13,6 +13,7 @@ import CourseApplicationPage from './pages/CourseApplicationPage';
 import ApplicationSuccessPage from './pages/ApplicationSuccessPage';
 import ApplicationDashboardPage from './pages/ApplicationDashboardPage';
 import DocumentManagementPage from './pages/DocumentManagementPage';
+import PaymentsPage from './pages/PaymentsPage';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             <Route path="/courses/application-success/:applicationId" element={<ApplicationSuccessPage />} />
             <Route path="/dashboard/applications" element={<ApplicationDashboardPage />} />
             <Route path="/documents" element={<DocumentManagementPage />} />
+            <Route path="/payments" element={<PaymentsPage />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>
