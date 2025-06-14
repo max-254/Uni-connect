@@ -518,7 +518,7 @@ class VisaService {
           description: 'TB test certificate if from certain countries',
           documentType: 'other',
           required: false,
-          instructions: 'If you\'re from a country where tuberculosis (TB) screening is required, you'll need to provide a TB test certificate.',
+          instructions: 'If you are from a country where tuberculosis (TB) screening is required, you will need to provide a TB test certificate.',
           externalLink: 'https://www.gov.uk/tb-test-visa'
         },
         {
@@ -529,7 +529,7 @@ class VisaService {
           description: 'Fingerprints and photograph',
           documentType: 'other',
           required: true,
-          instructions: 'You\'ll need to provide your biometric information (fingerprints and a photograph) at a visa application center.'
+          instructions: 'You will need to provide your biometric information (fingerprints and a photograph) at a visa application center.'
         }
       ];
     }
