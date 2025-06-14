@@ -38,9 +38,25 @@ class AuthService {
         role: profileData.role as UserRole,
         profileComplete: !!profileData.profile_complete
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error);
-      throw new Error('Invalid login credentials');
+      
+      // Check for specific error types and provide user-friendly messages
+      if (error?.message?.includes('Invalid login credentials') || 
+          error?.code === 'invalid_credentials') {
+        throw new Error('Invalid email or password. Please check your credentials and try again.');
+      }
+      
+      if (error?.message?.includes('Email not confirmed')) {
+        throw new Error('Please check your email and click the confirmation link before logging in.');
+      }
+      
+      if (error?.message?.includes('Too many requests')) {
+        throw new Error('Too many login attempts. Please wait a few minutes before trying again.');
+      }
+      
+      // Default error message for other cases
+      throw new Error('Login failed. Please try again or contact support if the problem persists.');
     }
   }
 
@@ -89,9 +105,29 @@ class AuthService {
         role,
         profileComplete: false
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error('Registration error:', error);
-      throw new Error('Failed to register user');
+      
+      // Check for specific error types and provide user-friendly messages
+      if (error?.message?.includes('User already registered') || 
+          error?.code === 'user_already_exists') {
+        throw new Error('This email is already registered. Please try logging in instead.');
+      }
+      
+      if (error?.message?.includes('Password should be at least')) {
+        throw new Error('Password must be at least 6 characters long.');
+      }
+      
+      if (error?.message?.includes('Invalid email')) {
+        throw new Error('Please enter a valid email address.');
+      }
+      
+      if (error?.message?.includes('Signup is disabled')) {
+        throw new Error('New registrations are currently disabled. Please contact support.');
+      }
+      
+      // Default error message for other cases
+      throw new Error('Registration failed. Please check your information and try again.');
     }
   }
 
