@@ -14,6 +14,7 @@ import ApplicationSuccessPage from './pages/ApplicationSuccessPage';
 import ApplicationDashboardPage from './pages/ApplicationDashboardPage';
 import DocumentManagementPage from './pages/DocumentManagementPage';
 import PaymentsPage from './pages/PaymentsPage';
+import VisaApplicationPage from './pages/VisaApplicationPage';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
             <Route path="/dashboard/applications" element={<ApplicationDashboardPage />} />
             <Route path="/documents" element={<DocumentManagementPage />} />
             <Route path="/payments" element={<PaymentsPage />} />
+            <Route path="/visa-applications" element={<VisaApplicationPage />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>
