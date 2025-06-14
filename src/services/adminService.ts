@@ -1,53 +1,6 @@
 import { supabase } from '../lib/supabase';
 
-export interface AdminStats {
-  totalStudents: number;
-  totalApplications: number;
-  totalUniversities: number;
-  pendingReviews: number;
-  recentActivity: Array<{
-    id: string;
-    title: string;
-    time: string;
-    icon: any;
-  }>;
-  topUniversities: Array<{
-    id: string;
-    name: string;
-    country: string;
-    applications: number;
-  }>;
-  applicationTrends: Array<{
-    date: string;
-    applications: number;
-    acceptances: number;
-  }>;
-}
-
-export interface StudentProfile {
-  id: string;
-  name: string;
-  email: string;
-  aiScore: number;
-  applicationCount: number;
-  acceptedCount: number;
-  status: string;
-  profileData: any;
-  documents: any[];
-  applications: any[];
-}
-
-export interface UniversityData {
-  id: string;
-  name: string;
-  country: string;
-  applicationCount: number;
-  acceptanceRate: string;
-  programs: string[];
-  requirements: any;
-  fees: any;
-}
-
+// Update the AdminService class with new methods for application management
 class AdminService {
   private static instance: AdminService;
 
@@ -58,258 +11,203 @@ class AdminService {
     return AdminService.instance;
   }
 
-  // Dashboard Statistics
-  async getAdminStats(): Promise<AdminStats> {
-    try {
-      // In a real implementation, these would be actual database queries
-      // For now, we'll return mock data that represents what the queries would return
-
-      const mockStats: AdminStats = {
-        totalStudents: 15420,
-        totalApplications: 8750,
-        totalUniversities: 1250,
-        pendingReviews: 342,
-        recentActivity: [
-          {
-            id: '1',
-            title: 'New student registration: Sarah Johnson',
-            time: '2 minutes ago',
-            icon: 'UserPlus'
-          },
-          {
-            id: '2',
-            title: 'Application submitted to MIT',
-            time: '15 minutes ago',
-            icon: 'FileText'
-          },
-          {
-            id: '3',
-            title: 'University partnership added: Oxford',
-            time: '1 hour ago',
-            icon: 'GraduationCap'
-          },
-          {
-            id: '4',
-            title: 'AI match override: Stanford application',
-            time: '2 hours ago',
-            icon: 'Brain'
-          },
-          {
-            id: '5',
-            title: 'Bulk message sent to 150 students',
-            time: '3 hours ago',
-            icon: 'MessageSquare'
-          }
-        ],
-        topUniversities: [
-          { id: '1', name: 'Harvard University', country: 'United States', applications: 1250 },
-          { id: '2', name: 'Stanford University', country: 'United States', applications: 1180 },
-          { id: '3', name: 'MIT', country: 'United States', applications: 1050 },
-          { id: '4', name: 'University of Oxford', country: 'United Kingdom', applications: 980 },
-          { id: '5', name: 'University of Cambridge', country: 'United Kingdom', applications: 920 }
-        ],
-        applicationTrends: [
-          { date: '2024-01-01', applications: 120, acceptances: 45 },
-          { date: '2024-01-02', applications: 135, acceptances: 52 },
-          { date: '2024-01-03', applications: 98, acceptances: 38 },
-          { date: '2024-01-04', applications: 156, acceptances: 61 },
-          { date: '2024-01-05', applications: 142, acceptances: 55 }
-        ]
-      };
-
-      return mockStats;
-    } catch (error) {
-      console.error('Error fetching admin stats:', error);
-      throw new Error('Failed to fetch admin statistics');
-    }
-  }
-
-  // Student Management
-  async getStudents(filters?: any): Promise<StudentProfile[]> {
-    try {
-      // Mock student data - in real implementation, this would query the database
-      const mockStudents: StudentProfile[] = [
-        {
-          id: '1',
-          name: 'Sarah Johnson',
-          email: 'sarah.johnson@email.com',
-          aiScore: 92,
-          applicationCount: 5,
-          acceptedCount: 3,
-          status: 'Active',
-          profileData: {
-            gpa: 3.8,
-            testScores: { sat: 1450, ielts: 7.5 },
-            major: 'Computer Science',
-            experience: '2 years'
-          },
-          documents: [],
-          applications: []
-        },
-        {
-          id: '2',
-          name: 'Michael Chen',
-          email: 'michael.chen@email.com',
-          aiScore: 88,
-          applicationCount: 7,
-          acceptedCount: 4,
-          status: 'Active',
-          profileData: {
-            gpa: 3.9,
-            testScores: { gre: 325, toefl: 108 },
-            major: 'Data Science',
-            experience: '3 years'
-          },
-          documents: [],
-          applications: []
-        },
-        {
-          id: '3',
-          name: 'Emily Rodriguez',
-          email: 'emily.rodriguez@email.com',
-          aiScore: 85,
-          applicationCount: 4,
-          acceptedCount: 2,
-          status: 'Active',
-          profileData: {
-            gpa: 3.7,
-            testScores: { sat: 1380, ielts: 7.0 },
-            major: 'Business Administration',
-            experience: '1 year'
-          },
-          documents: [],
-          applications: []
-        },
-        {
-          id: '4',
-          name: 'David Kim',
-          email: 'david.kim@email.com',
-          aiScore: 78,
-          applicationCount: 6,
-          acceptedCount: 1,
-          status: 'Under Review',
-          profileData: {
-            gpa: 3.5,
-            testScores: { gmat: 680, toefl: 95 },
-            major: 'Engineering',
-            experience: '2 years'
-          },
-          documents: [],
-          applications: []
-        },
-        {
-          id: '5',
-          name: 'Aisha Patel',
-          email: 'aisha.patel@email.com',
-          aiScore: 94,
-          applicationCount: 8,
-          acceptedCount: 6,
-          status: 'Active',
-          profileData: {
-            gpa: 4.0,
-            testScores: { gre: 335, ielts: 8.5 },
-            major: 'Medicine',
-            experience: '4 years'
-          },
-          documents: [],
-          applications: []
-        }
-      ];
-
-      return mockStudents;
-    } catch (error) {
-      console.error('Error fetching students:', error);
-      throw new Error('Failed to fetch students');
-    }
-  }
-
-  async getStudentDetails(studentId: string): Promise<StudentProfile | null> {
-    try {
-      const students = await this.getStudents();
-      return students.find(s => s.id === studentId) || null;
-    } catch (error) {
-      console.error('Error fetching student details:', error);
-      throw new Error('Failed to fetch student details');
-    }
-  }
-
   // Application Management
   async getApplications(filters?: any): Promise<any[]> {
     try {
-      const mockApplications = [
+      // In a real implementation, this would query the database with filters
+      // For demo purposes, we'll return mock data
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      return [
         {
-          id: '1',
-          student_id: '1',
-          student_name: 'Sarah Johnson',
-          university_id: 'harvard',
-          university_name: 'Harvard University',
-          program_name: 'Computer Science',
+          id: 'APP-2024-001',
+          studentId: 'STU-001',
+          studentName: 'Sarah Johnson',
+          studentEmail: 'sarah.johnson@example.com',
+          universityId: 'UNI-001',
+          universityName: 'Harvard University',
+          programName: 'Master of Computer Science',
+          country: 'United States',
           status: 'under-review',
-          aiMatchScore: 92,
-          aiRecommendation: 'approve',
-          submittedAt: '2024-01-15T10:00:00Z',
-          deadline: '2024-03-15T23:59:59Z',
-          student: { id: '1', name: 'Sarah Johnson', email: 'sarah.johnson@email.com' }
+          submittedAt: '2024-06-15T10:30:00Z',
+          updatedAt: '2024-06-18T14:45:00Z',
+          deadline: '2024-07-30T23:59:59Z',
+          completionPercentage: 85,
+          priority: 'high',
+          assignedTo: 'Admin User',
+          lastCommunication: '2024-06-18T14:45:00Z',
+          tags: ['Scholarship', 'International']
         },
         {
-          id: '2',
-          student_id: '2',
-          student_name: 'Michael Chen',
-          university_id: 'mit',
-          university_name: 'MIT',
-          program_name: 'Data Science',
+          id: 'APP-2024-002',
+          studentId: 'STU-002',
+          studentName: 'Michael Chen',
+          studentEmail: 'michael.chen@example.com',
+          universityId: 'UNI-002',
+          universityName: 'Stanford University',
+          programName: 'PhD in Physics',
+          country: 'United States',
           status: 'pending',
-          aiMatchScore: 88,
-          aiRecommendation: 'approve',
-          submittedAt: '2024-01-20T14:30:00Z',
-          deadline: '2024-02-28T23:59:59Z',
-          student: { id: '2', name: 'Michael Chen', email: 'michael.chen@email.com' }
+          submittedAt: '2024-06-10T09:15:00Z',
+          updatedAt: '2024-06-10T09:15:00Z',
+          deadline: '2024-08-15T23:59:59Z',
+          completionPercentage: 60,
+          priority: 'medium',
+          tags: ['Research', 'STEM']
         },
         {
-          id: '3',
-          student_id: '3',
-          student_name: 'Emily Rodriguez',
-          university_id: 'stanford',
-          university_name: 'Stanford University',
-          program_name: 'Business Administration',
+          id: 'APP-2024-003',
+          studentId: 'STU-003',
+          studentName: 'Emma Rodriguez',
+          studentEmail: 'emma.rodriguez@example.com',
+          universityId: 'UNI-003',
+          universityName: 'University of Oxford',
+          programName: 'Master of Business Administration',
+          country: 'United Kingdom',
+          status: 'additional-docs',
+          submittedAt: '2024-06-05T11:20:00Z',
+          updatedAt: '2024-06-17T16:30:00Z',
+          deadline: '2024-07-15T23:59:59Z',
+          completionPercentage: 75,
+          priority: 'high',
+          assignedTo: 'Admin User',
+          lastCommunication: '2024-06-17T16:30:00Z',
+          tags: ['Business', 'International']
+        },
+        {
+          id: 'APP-2024-004',
+          studentId: 'STU-004',
+          studentName: 'James Wilson',
+          studentEmail: 'james.wilson@example.com',
+          universityId: 'UNI-004',
+          universityName: 'University of Toronto',
+          programName: 'Bachelor of Engineering',
+          country: 'Canada',
           status: 'accepted',
-          aiMatchScore: 85,
-          aiRecommendation: 'approve',
-          submittedAt: '2024-01-10T09:15:00Z',
-          deadline: '2024-04-01T23:59:59Z',
-          student: { id: '3', name: 'Emily Rodriguez', email: 'emily.rodriguez@email.com' }
+          submittedAt: '2024-05-20T14:45:00Z',
+          updatedAt: '2024-06-20T10:15:00Z',
+          deadline: '2024-06-30T23:59:59Z',
+          completionPercentage: 100,
+          priority: 'medium',
+          assignedTo: 'Admin User',
+          lastCommunication: '2024-06-20T10:15:00Z',
+          tags: ['Engineering', 'Scholarship']
         },
         {
-          id: '4',
-          student_id: '4',
-          student_name: 'David Kim',
-          university_id: 'oxford',
-          university_name: 'University of Oxford',
-          program_name: 'Engineering',
+          id: 'APP-2024-005',
+          studentId: 'STU-005',
+          studentName: 'Aisha Patel',
+          studentEmail: 'aisha.patel@example.com',
+          universityId: 'UNI-005',
+          universityName: 'University of Melbourne',
+          programName: 'Master of Public Health',
+          country: 'Australia',
+          status: 'interview',
+          submittedAt: '2024-06-01T08:30:00Z',
+          updatedAt: '2024-06-19T11:45:00Z',
+          deadline: '2024-07-20T23:59:59Z',
+          completionPercentage: 90,
+          priority: 'high',
+          assignedTo: 'Admin User',
+          lastCommunication: '2024-06-19T11:45:00Z',
+          tags: ['Health Sciences']
+        },
+        {
+          id: 'APP-2024-006',
+          studentId: 'STU-006',
+          studentName: 'David Kim',
+          studentEmail: 'david.kim@example.com',
+          universityId: 'UNI-006',
+          universityName: 'Technical University of Munich',
+          programName: 'Master of Science in Robotics',
+          country: 'Germany',
           status: 'rejected',
-          aiMatchScore: 65,
-          aiRecommendation: 'reject',
-          submittedAt: '2024-01-25T16:45:00Z',
-          deadline: '2024-03-30T23:59:59Z',
-          student: { id: '4', name: 'David Kim', email: 'david.kim@email.com' }
+          submittedAt: '2024-05-15T13:20:00Z',
+          updatedAt: '2024-06-10T15:30:00Z',
+          deadline: '2024-06-15T23:59:59Z',
+          completionPercentage: 100,
+          priority: 'low',
+          assignedTo: 'Admin User',
+          lastCommunication: '2024-06-10T15:30:00Z',
+          tags: ['Engineering', 'STEM']
         },
         {
-          id: '5',
-          student_id: '5',
-          student_name: 'Aisha Patel',
-          university_id: 'cambridge',
-          university_name: 'University of Cambridge',
-          program_name: 'Medicine',
+          id: 'APP-2024-007',
+          studentId: 'STU-007',
+          studentName: 'Olivia Brown',
+          studentEmail: 'olivia.brown@example.com',
+          universityId: 'UNI-007',
+          universityName: 'University of British Columbia',
+          programName: 'Bachelor of Arts in Psychology',
+          country: 'Canada',
+          status: 'waitlisted',
+          submittedAt: '2024-05-25T09:45:00Z',
+          updatedAt: '2024-06-15T14:20:00Z',
+          deadline: '2024-06-25T23:59:59Z',
+          completionPercentage: 100,
+          priority: 'medium',
+          assignedTo: 'Admin User',
+          lastCommunication: '2024-06-15T14:20:00Z',
+          tags: ['Arts', 'Psychology']
+        },
+        {
+          id: 'APP-2024-008',
+          studentId: 'STU-008',
+          studentName: 'Carlos Mendez',
+          studentEmail: 'carlos.mendez@example.com',
+          universityId: 'UNI-008',
+          universityName: 'ETH Zurich',
+          programName: 'PhD in Computer Science',
+          country: 'Switzerland',
+          status: 'deferred',
+          submittedAt: '2024-05-10T11:30:00Z',
+          updatedAt: '2024-06-12T16:45:00Z',
+          deadline: '2024-06-20T23:59:59Z',
+          completionPercentage: 100,
+          priority: 'high',
+          assignedTo: 'Admin User',
+          lastCommunication: '2024-06-12T16:45:00Z',
+          tags: ['Research', 'STEM', 'International']
+        },
+        {
+          id: 'APP-2024-009',
+          studentId: 'STU-009',
+          studentName: 'Sophie Martin',
+          studentEmail: 'sophie.martin@example.com',
+          universityId: 'UNI-009',
+          universityName: 'Sorbonne University',
+          programName: 'Master of Arts in French Literature',
+          country: 'France',
+          status: 'pending',
+          submittedAt: '2024-06-18T10:15:00Z',
+          updatedAt: '2024-06-18T10:15:00Z',
+          deadline: '2024-08-01T23:59:59Z',
+          completionPercentage: 50,
+          priority: 'low',
+          tags: ['Arts', 'Literature']
+        },
+        {
+          id: 'APP-2024-010',
+          studentId: 'STU-010',
+          studentName: 'Ahmed Hassan',
+          studentEmail: 'ahmed.hassan@example.com',
+          universityId: 'UNI-010',
+          universityName: 'University of Tokyo',
+          programName: 'Master of Engineering in Electrical Engineering',
+          country: 'Japan',
           status: 'under-review',
-          aiMatchScore: 96,
-          aiRecommendation: 'approve',
-          submittedAt: '2024-01-12T11:20:00Z',
-          deadline: '2024-02-15T23:59:59Z',
-          student: { id: '5', name: 'Aisha Patel', email: 'aisha.patel@email.com' }
+          submittedAt: '2024-06-08T13:45:00Z',
+          updatedAt: '2024-06-16T09:30:00Z',
+          deadline: '2024-07-25T23:59:59Z',
+          completionPercentage: 80,
+          priority: 'medium',
+          assignedTo: 'Admin User',
+          lastCommunication: '2024-06-16T09:30:00Z',
+          tags: ['Engineering', 'International']
         }
       ];
-
-      return mockApplications;
     } catch (error) {
       console.error('Error fetching applications:', error);
       throw new Error('Failed to fetch applications');
@@ -318,7 +216,7 @@ class AdminService {
 
   async updateApplicationStatus(applicationId: string, status: string): Promise<void> {
     try {
-      // In real implementation, this would update the database
+      // In a real implementation, this would update the database
       console.log(`Updating application ${applicationId} status to ${status}`);
       
       // Simulate API call
@@ -329,193 +227,368 @@ class AdminService {
     }
   }
 
-  // University Management
-  async getUniversities(filters?: any): Promise<UniversityData[]> {
+  async deleteApplication(applicationId: string): Promise<void> {
     try {
-      const mockUniversities: UniversityData[] = [
+      // In a real implementation, this would delete from the database
+      console.log(`Deleting application ${applicationId}`);
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+    } catch (error) {
+      console.error('Error deleting application:', error);
+      throw new Error('Failed to delete application');
+    }
+  }
+
+  async getApplicationDocuments(applicationId: string): Promise<any[]> {
+    try {
+      // In a real implementation, this would fetch from the database
+      // For demo purposes, we'll return mock data
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 600));
+      
+      return [
         {
-          id: 'harvard',
-          name: 'Harvard University',
-          country: 'United States',
-          applicationCount: 1250,
-          acceptanceRate: '5%',
-          programs: ['Computer Science', 'Business', 'Medicine', 'Law'],
-          requirements: { gpa: 3.8, testScore: 'SAT 1500+' },
-          fees: { tuition: '$50,000', total: '$75,000' }
+          id: 'doc-001',
+          name: 'Passport',
+          fileType: 'PDF',
+          fileSize: '2.3 MB',
+          uploadedAt: '2024-06-15T10:30:00Z',
+          status: 'approved',
+          required: true
         },
         {
-          id: 'mit',
-          name: 'MIT',
-          country: 'United States',
-          applicationCount: 1050,
-          acceptanceRate: '7%',
-          programs: ['Engineering', 'Computer Science', 'Physics', 'Mathematics'],
-          requirements: { gpa: 3.9, testScore: 'SAT 1550+' },
-          fees: { tuition: '$53,000', total: '$78,000' }
+          id: 'doc-002',
+          name: 'Academic Transcript',
+          fileType: 'PDF',
+          fileSize: '1.8 MB',
+          uploadedAt: '2024-06-15T10:35:00Z',
+          status: 'approved',
+          required: true
         },
         {
-          id: 'stanford',
-          name: 'Stanford University',
-          country: 'United States',
-          applicationCount: 1180,
-          acceptanceRate: '4%',
-          programs: ['Computer Science', 'Business', 'Engineering', 'Medicine'],
-          requirements: { gpa: 3.8, testScore: 'SAT 1520+' },
-          fees: { tuition: '$52,000', total: '$77,000' }
+          id: 'doc-003',
+          name: 'Statement of Purpose',
+          fileType: 'PDF',
+          fileSize: '520 KB',
+          uploadedAt: '2024-06-15T10:40:00Z',
+          status: 'pending',
+          required: true
         },
         {
-          id: 'oxford',
-          name: 'University of Oxford',
-          country: 'United Kingdom',
-          applicationCount: 980,
-          acceptanceRate: '18%',
-          programs: ['Philosophy', 'Medicine', 'Law', 'Engineering'],
-          requirements: { gpa: 3.7, testScore: 'A*A*A' },
-          fees: { tuition: '£28,000', total: '£45,000' }
+          id: 'doc-004',
+          name: 'Recommendation Letter 1',
+          fileType: 'PDF',
+          fileSize: '750 KB',
+          uploadedAt: '2024-06-15T10:45:00Z',
+          status: 'approved',
+          required: true
         },
         {
-          id: 'cambridge',
-          name: 'University of Cambridge',
-          country: 'United Kingdom',
-          applicationCount: 920,
-          acceptanceRate: '21%',
-          programs: ['Mathematics', 'Natural Sciences', 'Medicine', 'Engineering'],
-          requirements: { gpa: 3.7, testScore: 'A*A*A' },
-          fees: { tuition: '£28,000', total: '£45,000' }
+          id: 'doc-005',
+          name: 'Recommendation Letter 2',
+          fileType: 'PDF',
+          fileSize: '680 KB',
+          uploadedAt: '2024-06-15T10:50:00Z',
+          status: 'rejected',
+          required: true
+        },
+        {
+          id: 'doc-006',
+          name: 'CV/Resume',
+          fileType: 'PDF',
+          fileSize: '450 KB',
+          uploadedAt: '2024-06-15T10:55:00Z',
+          status: 'approved',
+          required: true
+        },
+        {
+          id: 'doc-007',
+          name: 'Financial Documents',
+          fileType: 'PDF',
+          fileSize: '1.2 MB',
+          uploadedAt: '2024-06-15T11:00:00Z',
+          status: 'pending',
+          required: false
         }
       ];
-
-      return mockUniversities;
     } catch (error) {
-      console.error('Error fetching universities:', error);
-      throw new Error('Failed to fetch universities');
+      console.error('Error fetching application documents:', error);
+      throw new Error('Failed to fetch application documents');
     }
   }
 
-  async createUniversity(universityData: Partial<UniversityData>): Promise<UniversityData> {
+  async getApplicationTimeline(applicationId: string): Promise<any[]> {
     try {
-      // In real implementation, this would create in database
-      const newUniversity: UniversityData = {
-        id: Date.now().toString(),
-        name: universityData.name || '',
-        country: universityData.country || '',
-        applicationCount: 0,
-        acceptanceRate: universityData.acceptanceRate || '0%',
-        programs: universityData.programs || [],
-        requirements: universityData.requirements || {},
-        fees: universityData.fees || {}
-      };
-
-      console.log('Creating university:', newUniversity);
-      return newUniversity;
-    } catch (error) {
-      console.error('Error creating university:', error);
-      throw new Error('Failed to create university');
-    }
-  }
-
-  async updateUniversity(universityId: string, updates: Partial<UniversityData>): Promise<void> {
-    try {
-      // In real implementation, this would update the database
-      console.log(`Updating university ${universityId}:`, updates);
+      // In a real implementation, this would fetch from the database
+      // For demo purposes, we'll return mock data
       
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-    } catch (error) {
-      console.error('Error updating university:', error);
-      throw new Error('Failed to update university');
-    }
-  }
-
-  async deleteUniversity(universityId: string): Promise<void> {
-    try {
-      // In real implementation, this would delete from database
-      console.log(`Deleting university ${universityId}`);
+      await new Promise(resolve => setTimeout(resolve, 600));
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-    } catch (error) {
-      console.error('Error deleting university:', error);
-      throw new Error('Failed to delete university');
-    }
-  }
-
-  // AI Override Functions
-  async overrideMatch(studentId: string, universityId: string, action: 'approve' | 'reject'): Promise<void> {
-    try {
-      // In real implementation, this would update the AI recommendation override
-      console.log(`AI Override: ${action} match between student ${studentId} and university ${universityId}`);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-    } catch (error) {
-      console.error('Error overriding match:', error);
-      throw new Error('Failed to override AI match');
-    }
-  }
-
-  // Messaging
-  async sendMessage(recipientId: string, message: string, subject?: string): Promise<void> {
-    try {
-      // In real implementation, this would send via email/notification system
-      console.log(`Sending message to ${recipientId}:`, { subject, message });
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-    } catch (error) {
-      console.error('Error sending message:', error);
-      throw new Error('Failed to send message');
-    }
-  }
-
-  async sendBulkMessage(recipientIds: string[], message: string, subject?: string): Promise<void> {
-    try {
-      // In real implementation, this would send bulk messages
-      console.log(`Sending bulk message to ${recipientIds.length} recipients:`, { subject, message });
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    } catch (error) {
-      console.error('Error sending bulk message:', error);
-      throw new Error('Failed to send bulk message');
-    }
-  }
-
-  // Analytics
-  async getAnalytics(dateRange?: { start: string; end: string }): Promise<any> {
-    try {
-      // Mock analytics data
-      const mockAnalytics = {
-        applicationTrends: [
-          { date: '2024-01-01', applications: 120, acceptances: 45 },
-          { date: '2024-01-02', applications: 135, acceptances: 52 },
-          { date: '2024-01-03', applications: 98, acceptances: 38 },
-          { date: '2024-01-04', applications: 156, acceptances: 61 },
-          { date: '2024-01-05', applications: 142, acceptances: 55 }
-        ],
-        topCountries: [
-          { country: 'United States', applications: 3500 },
-          { country: 'United Kingdom', applications: 2800 },
-          { country: 'Canada', applications: 1900 },
-          { country: 'Australia', applications: 1200 },
-          { country: 'Germany', applications: 800 }
-        ],
-        aiAccuracy: {
-          overall: 87,
-          byCategory: {
-            'Computer Science': 92,
-            'Business': 85,
-            'Engineering': 89,
-            'Medicine': 94,
-            'Arts': 78
-          }
+      return [
+        {
+          type: 'status_change',
+          description: 'Application Submitted',
+          details: 'Application was submitted by the student',
+          timestamp: '2024-06-15T10:30:00Z',
+          user: 'System'
+        },
+        {
+          type: 'document_upload',
+          description: 'Documents Uploaded',
+          details: 'Student uploaded required documents',
+          timestamp: '2024-06-15T10:55:00Z',
+          user: 'Sarah Johnson'
+        },
+        {
+          type: 'status_change',
+          description: 'Status Changed to Under Review',
+          details: 'Application status was updated from Pending to Under Review',
+          timestamp: '2024-06-16T09:15:00Z',
+          user: 'Admin User'
+        },
+        {
+          type: 'note_added',
+          description: 'Internal Note Added',
+          details: 'An internal note was added to the application',
+          timestamp: '2024-06-17T14:20:00Z',
+          user: 'Admin User'
+        },
+        {
+          type: 'document_upload',
+          description: 'Additional Document Requested',
+          details: 'Request sent for additional financial documents',
+          timestamp: '2024-06-18T11:30:00Z',
+          user: 'Admin User'
+        },
+        {
+          type: 'status_change',
+          description: 'Status Changed to Additional Docs',
+          details: 'Application status was updated from Under Review to Additional Docs',
+          timestamp: '2024-06-18T11:35:00Z',
+          user: 'Admin User'
         }
-      };
-
-      return mockAnalytics;
+      ];
     } catch (error) {
-      console.error('Error fetching analytics:', error);
-      throw new Error('Failed to fetch analytics');
+      console.error('Error fetching application timeline:', error);
+      throw new Error('Failed to fetch application timeline');
+    }
+  }
+
+  async getApplicationNotes(applicationId: string): Promise<any[]> {
+    try {
+      // In a real implementation, this would fetch from the database
+      // For demo purposes, we'll return mock data
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 600));
+      
+      return [
+        {
+          id: 'note-001',
+          content: 'Student has excellent academic credentials. GPA is well above our requirements.',
+          timestamp: '2024-06-16T09:20:00Z',
+          addedBy: 'Admin User',
+          internalOnly: true
+        },
+        {
+          id: 'note-002',
+          content: 'Recommendation letters are very strong, especially from Professor Smith at MIT.',
+          timestamp: '2024-06-17T14:20:00Z',
+          addedBy: 'Admin User',
+          internalOnly: true
+        },
+        {
+          id: 'note-003',
+          content: 'Financial documents need verification. Requested additional bank statements.',
+          timestamp: '2024-06-18T11:30:00Z',
+          addedBy: 'Admin User',
+          internalOnly: false
+        },
+        {
+          id: 'note-004',
+          content: 'Student has research experience that aligns well with our program.',
+          timestamp: '2024-06-19T10:15:00Z',
+          addedBy: 'Admin User',
+          internalOnly: true
+        }
+      ];
+    } catch (error) {
+      console.error('Error fetching application notes:', error);
+      throw new Error('Failed to fetch application notes');
+    }
+  }
+
+  async addApplicationNote(applicationId: string, content: string, internalOnly: boolean = true): Promise<any> {
+    try {
+      // In a real implementation, this would add to the database
+      // For demo purposes, we'll return mock data
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      return {
+        id: `note-${Date.now()}`,
+        content,
+        timestamp: new Date().toISOString(),
+        addedBy: 'Admin User',
+        internalOnly
+      };
+    } catch (error) {
+      console.error('Error adding application note:', error);
+      throw new Error('Failed to add application note');
+    }
+  }
+
+  async updateApplicationNote(noteId: string, content: string): Promise<void> {
+    try {
+      // In a real implementation, this would update the database
+      console.log(`Updating note ${noteId} with content: ${content}`);
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+    } catch (error) {
+      console.error('Error updating application note:', error);
+      throw new Error('Failed to update application note');
+    }
+  }
+
+  async deleteApplicationNote(noteId: string): Promise<void> {
+    try {
+      // In a real implementation, this would delete from the database
+      console.log(`Deleting note ${noteId}`);
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+    } catch (error) {
+      console.error('Error deleting application note:', error);
+      throw new Error('Failed to delete application note');
+    }
+  }
+
+  async addApplicationTag(applicationId: string, tag: string): Promise<void> {
+    try {
+      // In a real implementation, this would add to the database
+      console.log(`Adding tag ${tag} to application ${applicationId}`);
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+    } catch (error) {
+      console.error('Error adding application tag:', error);
+      throw new Error('Failed to add application tag');
+    }
+  }
+
+  async removeApplicationTag(applicationId: string, tag: string): Promise<void> {
+    try {
+      // In a real implementation, this would remove from the database
+      console.log(`Removing tag ${tag} from application ${applicationId}`);
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+    } catch (error) {
+      console.error('Error removing application tag:', error);
+      throw new Error('Failed to remove application tag');
+    }
+  }
+
+  async getMessageTemplates(): Promise<any[]> {
+    try {
+      // In a real implementation, this would fetch from the database
+      // For demo purposes, we'll return mock data
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 600));
+      
+      return [
+        {
+          id: 'template-001',
+          name: 'Application Status Update',
+          subject: 'Application Status Update - {{UNIVERSITY_NAME}}',
+          body: 'Dear {{STUDENT_NAME}},\n\nWe wanted to update you on the status of your application to {{UNIVERSITY_NAME}} for the {{PROGRAM_NAME}} program.\n\nYour application is currently under review by our admissions committee. We will notify you of any updates or if additional information is required.\n\nBest regards,\nAdmissions Team'
+        },
+        {
+          id: 'template-002',
+          name: 'Additional Documents Request',
+          subject: 'Additional Documents Required - {{UNIVERSITY_NAME}}',
+          body: 'Dear {{STUDENT_NAME}},\n\nThank you for your application to {{UNIVERSITY_NAME}}.\n\nWe need additional documents to complete your application review. Please log in to your student portal to see the specific requirements and upload the necessary documents.\n\nPlease submit these documents by {{DEADLINE}}.\n\nBest regards,\nAdmissions Team'
+        },
+        {
+          id: 'template-003',
+          name: 'Interview Invitation',
+          subject: 'Interview Invitation - {{UNIVERSITY_NAME}}',
+          body: 'Dear {{STUDENT_NAME}},\n\nWe are pleased to invite you to an interview for your application to the {{PROGRAM_NAME}} program at {{UNIVERSITY_NAME}}.\n\nPlease log in to your student portal to schedule your interview at a time convenient for you.\n\nBest regards,\nAdmissions Team'
+        },
+        {
+          id: 'template-004',
+          name: 'Application Accepted',
+          subject: 'Congratulations! Your Application Has Been Accepted - {{UNIVERSITY_NAME}}',
+          body: 'Dear {{STUDENT_NAME}},\n\nCongratulations! We are pleased to inform you that your application to the {{PROGRAM_NAME}} program at {{UNIVERSITY_NAME}} has been accepted.\n\nPlease log in to your student portal to view your acceptance letter and next steps.\n\nWe look forward to welcoming you to our community.\n\nBest regards,\nAdmissions Team'
+        },
+        {
+          id: 'template-005',
+          name: 'Application Rejected',
+          subject: 'Application Status Update - {{UNIVERSITY_NAME}}',
+          body: 'Dear {{STUDENT_NAME}},\n\nThank you for your interest in the {{PROGRAM_NAME}} program at {{UNIVERSITY_NAME}}.\n\nAfter careful consideration, we regret to inform you that we are unable to offer you admission at this time. This year we received an exceptionally high number of qualified applicants, which made our selection process very competitive.\n\nWe wish you the best in your academic pursuits.\n\nBest regards,\nAdmissions Team'
+        }
+      ];
+    } catch (error) {
+      console.error('Error fetching message templates:', error);
+      throw new Error('Failed to fetch message templates');
+    }
+  }
+
+  async getCommunicationHistory(studentId: string): Promise<any[]> {
+    try {
+      // In a real implementation, this would fetch from the database
+      // For demo purposes, we'll return mock data
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 600));
+      
+      return [
+        {
+          id: 'comm-001',
+          type: 'email',
+          subject: 'Application Received',
+          message: 'Thank you for submitting your application. We will review it and get back to you soon.',
+          sentAt: '2024-06-15T11:00:00Z',
+          sentBy: 'System',
+          read: true
+        },
+        {
+          id: 'comm-002',
+          type: 'email',
+          subject: 'Application Status Update',
+          message: 'Your application is now under review by our admissions committee.',
+          sentAt: '2024-06-16T09:30:00Z',
+          sentBy: 'Admin User',
+          read: true
+        },
+        {
+          id: 'comm-003',
+          type: 'notification',
+          subject: 'Document Verification',
+          message: 'Your documents have been verified. We may contact you if we need additional information.',
+          sentAt: '2024-06-17T14:45:00Z',
+          sentBy: 'System',
+          read: true
+        },
+        {
+          id: 'comm-004',
+          type: 'email',
+          subject: 'Additional Documents Required',
+          message: 'We need additional financial documents to complete your application review. Please log in to your student portal to upload the required documents.',
+          sentAt: '2024-06-18T11:30:00Z',
+          sentBy: 'Admin User',
+          read: false
+        }
+      ];
+    } catch (error) {
+      console.error('Error fetching communication history:', error);
+      throw new Error('Failed to fetch communication history');
     }
   }
 }

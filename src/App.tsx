@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage';
 import UniversitiesPage from './pages/UniversitiesPage';
 import DashboardPage from './pages/DashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import AdminApplicationDashboardPage from './pages/AdminApplicationDashboardPage';
 import SignupPage from './pages/SignupPage';
 import LoginPage from './pages/LoginPage';
 import CoursesPage from './pages/CoursesPage';
@@ -27,6 +28,7 @@ function App() {
             <Route path="/universities" element={<UniversitiesPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/admin" element={<AdminDashboardPage />} />
+            <Route path="/admin/applications" element={<AdminApplicationDashboardPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/courses" element={<CoursesPage />} />
