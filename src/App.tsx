@@ -15,6 +15,7 @@ import ApplicationDashboardPage from './pages/ApplicationDashboardPage';
 import DocumentManagementPage from './pages/DocumentManagementPage';
 import PaymentsPage from './pages/PaymentsPage';
 import VisaApplicationPage from './pages/VisaApplicationPage';
+import TravelDashboardPage from './pages/TravelDashboardPage';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
             <Route path="/documents" element={<DocumentManagementPage />} />
             <Route path="/payments" element={<PaymentsPage />} />
             <Route path="/visa-applications" element={<VisaApplicationPage />} />
+            <Route path="/travel" element={<TravelDashboardPage />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>
