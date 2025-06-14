@@ -493,7 +493,7 @@ const VisaGuidanceModal: React.FC<VisaGuidanceModalProps> = ({
                           {universityCountry === 'United States' 
                             ? 'You can work on-campus for up to 20 hours per week during the academic year and full-time during breaks. Off-campus work is generally not permitted except in cases of severe economic hardship or through programs like CPT.'
                             : universityCountry === 'United Kingdom'
-                            ? 'You can work up to 20 hours per week during term time and full-time during holidays if you're studying at degree level or above. Lower-level courses have more restricted work rights.'
+                            ? 'You can work up to 20 hours per week during term time and full-time during holidays if you\'re studying at degree level or above. Lower-level courses have more restricted work rights.'
                             : universityCountry === 'Canada'
                             ? 'You can work up to 20 hours per week off-campus during academic sessions and full-time during scheduled breaks. On-campus work has no hour restrictions.'
                             : universityCountry === 'Australia'
